@@ -1,0 +1,3157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Santo Domingo, Dominican Republic — photographs by Seamus Dolan, Flaneur 718">
+
+  <!-- Prevent browser scroll restoration landing mid-grid on back-nav/soft-reload.
+       Must be in <head> before any layout — fires before browser applies saved position. -->
+  <script>if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }</script>
+
+  <!-- ============================================================
+       FLANEUR 718 — LOCATION PAGES PROTOTYPE (MOBILE)
+       Page: Santo Domingo, Dominican Republic (first international page)
+       File: santo-domingo-mobile/santo-domingo-mobile-index.html
+       Desktop source: ../santo-domingo-index.html (signed off Session 113, April 2026)
+       Body class: fl718-santo-domingo-page
+       CSS prefix: fl718-sd- (page-specific) / fl718-loc- (shared)
+       Page type: Standard Gallery (photo page)
+       Animation level: MINIMAL
+
+         - Hero: PLACEHOLDER FADE-IN — page-specific technique TBD
+           The interior/exterior threshold quality of the photograph
+           suggests something that begins in the dark and opens toward
+           the window light — a slow bloom, a curtain-pull, a threshold
+           moment. The actual technique will be designed in prototyping.
+           Stand-in: simple opacity fade-in over 1.4s (load-triggered).
+
+         - Grid: 3-COLUMN MASONRY layout (23–24 photos, all landscape,
+           distinct thematic clusters). Masonry chosen over 2-col
+           editorial because the set has no natural portrait/landscape
+           pairing rhythm. City density is appropriate at 3 columns.
+           Grid entrance: PLACEHOLDER — opacity fade per-item via
+           IntersectionObserver. Page-specific technique TBD.
+
+         - Hover effect: TBD in prototyping. Placeholder: gentle opacity
+           veil. City photography warrants something with more presence
+           than the landscape pages — the set has strong geometric
+           shadows that invite a contrast/light-based hover.
+
+         - After-content: deferred. First international page — the
+           Southwest "Horizon Line" pattern does not fit a city page.
+           Minimal placeholder present; decision deferred to prototyping.
+
+         - No ScrollTrigger — standard gallery uses IntersectionObserver.
+
+       GSAP version: 3.12.5 (frozen — never upgrade without full test)
+       JS prefix: sd (sdReducedMotion, sdApIsAnimating, sdApIsOpen, etc.)
+       Photos: 23–24 (grid) + 1 hero
+       Created: 2026-04-08
+
+       GRID LAYOUT: 3-col masonry desktop → 2-col tablet → 1-col mobile.
+         CSS columns masonry (column-count). NOT CSS Grid — Grid causes
+         dead vertical space with mixed-height photos. Each item:
+         break-inside: avoid; margin-bottom: 8px (column gap consistent).
+         Responsive: 3-col (>768px) / 2-col (≤768px) / 1-col (≤480px).
+
+       HERO ANIMATION: TBD — page-specific technique to be designed.
+         This photograph: dim interior foreground + curtains + framed
+         beach painting on left wall + through the window: the city,
+         clouds, light breaking through. The interior-to-exterior
+         threshold is the emotional argument of the entire page.
+         Candidate directions: begin dark (interior), let the window
+         open — a slow bloom from the bright window quadrant, a
+         curtain-pull, a developing-tray reveal that honors the
+         contrast between the dim room and the city light outside.
+         None of these are the established patterns (not SVG blur,
+         not developing tray, not grain coalesce, not iris, not
+         brightness room-enter). New pattern warranted.
+         Stand-in until designed: 1.4s opacity fade on load.
+
+       COLOR PALETTE: Warm concrete
+         Humid afternoon, concrete and foliage. Not tropical-postcard.
+         The set is muted greens, dingy whites, weathered grays,
+         strong shadows, with occasional saturated accents.
+         More weight than the desert pages — the city earns it.
+         Hero bg:  #e8e4de  (warm muted concrete, pre-load edge)
+         Body bg:  #f5f3ef  (warm off-white, slightly heavier than desert)
+         Distinct from Monument Valley (#ede8e0/#f2ece4) — cooler, less red.
+         Distinct from Santa Fe (#f0e0ce/#f5ede4) — less terracotta.
+         Distinct from Grand Canyon (#e8e4de/#f9f8f6) — similar but warmer.
+
+       TYPOGRAPHY: TBD in prototyping.
+         Should feel editorial and grounded — not the delicate serifs
+         of the landscape pages. The brief says: "editorial, density,
+         directness." Candidate: a sans-serif with weight (Inter, DM
+         Sans at heavier weight), or a grounded serif (Lora, Spectral).
+         Placeholder: DM Sans 400 for hero title, DM Sans 300 italic
+         for subtitle. Replace in prototyping.
+
+       PHOTO SEQUENCING (confirmed in editorial notes):
+         Arc: arrival → city in motion → architecture/geometry →
+           stillness and waiting → rain → the park →
+           street portraits and color → closing.
+         24 photos (including hero in grid as tentative position 23,
+         and confirmed closer at 24). Two filenames contain leading
+         space in " geometric" — using verbatim Dropbox filenames.
+         Note: hero is NOT counted in grid index — grid indices 0–22/23.
+
+       ALL PHOTOS: digital — no analog/film caption logic needed.
+         data-medium="digital" on all figures.
+         No data-film attribute. Lightbox badge suppressed for all.
+
+       PRE-LAUNCH TODO:
+         - Design and implement page-specific hero animation technique
+         - Design grid entrance animation (distinct from existing pages)
+         - Design hover effect (city character, contrast/geometry)
+         - Finalize typography selection
+         - Confirm after-content treatment (first international page)
+         - Wire actual hrefs in after-content
+         - Re-export hero at 2560px via Lightroom hero preset
+         - Add srcset + WebP per QA checklist
+         - Verify both space-prefixed filenames on target server
+         - Add alt text during pre-launch accessibility pass
+         - Confirm body class in WordPress page options
+  ============================================================ -->
+
+  <!-- GOOGLE FONTS
+       Playfair Display 900 italic — hero city title (Concept A: Colonial Weight)
+       Lora 300 italic — hero subtitle
+       DM Sans — captions, functional UI (consistent across all location pages)
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,900&family=Lora:ital,wght@1,300&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- GSAP 3.12.5
+       ScrollTrigger required by after-content IIFE (scroll-triggered entrance).
+       ⚠ NEVER upgrade from 3.12.5 without testing every page.
+       cdnjs URL is authoritative — version 3.14.x does not exist there. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <title>Santo Domingo, Dominican Republic — Flaneur 718</title>
+
+  <style>
+    /* ============================================================
+       ALL CSS SCOPED TO: body.fl718-santo-domingo-page
+       Every rule uses this body class as scope prefix.
+       Never write unscoped rules — they bleed into other pages.
+       ============================================================ */
+
+    /* ------------------------------------------------------------
+       BASE RESET & BODY
+       ------------------------------------------------------------ */
+    body.fl718-santo-domingo-page {
+      margin: 0;
+      padding: 0;
+      /* overflow-x: clip — NOT hidden.
+         overflow-x: hidden creates a new scroll container that breaks
+         position:sticky and ScrollTrigger pins. clip clips visually
+         without that side effect. Never use overflow-x:hidden on body
+         or html on this project. */
+      overflow-x: clip;
+      background-color: #f5f3ef;
+      color: #1a1a1a;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Box-sizing via :where() — zero specificity, never fights other rules */
+    :where(body.fl718-santo-domingo-page) *,
+    :where(body.fl718-santo-domingo-page) *::before,
+    :where(body.fl718-santo-domingo-page) *::after {
+      box-sizing: border-box;
+    }
+
+    body.fl718-santo-domingo-page img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* ------------------------------------------------------------
+       VISUALLY HIDDEN — accessible text, not visible on screen.
+       ------------------------------------------------------------ */
+    body.fl718-santo-domingo-page .fl718-sd-visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ============================================================
+       HERO SECTION
+       height: 100vh — fills the viewport on load.
+       The hero photograph is landscape, interior/exterior subject.
+       Background color is pre-load placeholder: warm muted concrete.
+
+       ANIMATION: "Two Planes" — two clipped copies of the photograph
+       slide in from opposite sides, sealing at the window frame line.
+       ============================================================ */
+
+    body.fl718-santo-domingo-page .fl718-sd-hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: clip;
+      background-color: #e8e4de;
+    }
+
+    /* ============================================================
+       HERO — TWO PLANES ANIMATION ("Two Planes")
+       Two absolutely-positioned copies of the same photograph,
+       each clipped to one half of the frame. Left: interior world
+       (room, painting, curtains) — enters from the left. Right:
+       exterior world (window, city, Caribbean light) — enters from
+       the right. They seal at the window frame line. You have seen
+       the seam.
+       ============================================================ */
+
+    body.fl718-santo-domingo-page .fl718-sd-hero__img-left,
+    body.fl718-santo-domingo-page .fl718-sd-hero__img-right {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+      opacity: 0;
+    }
+
+    /* Left half: the interior — room, curtains, the tourist painting. */
+    body.fl718-santo-domingo-page .fl718-sd-hero__img-left {
+      clip-path: inset(0 50% 0 0);
+    }
+
+    /* Right half: the exterior — window, sky, city, harsh Caribbean light. */
+    body.fl718-santo-domingo-page .fl718-sd-hero__img-right {
+      clip-path: inset(0 0 0 50%);
+    }
+
+    /* The seam — a 1px vertical rule at 50% that names the threshold
+       between the two worlds, appears briefly then dissolves. */
+    body.fl718-santo-domingo-page .fl718-sd-hero__seam {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.55);
+      transform: translateX(-50%);
+      opacity: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Title block — bottom gradient + text container.
+       Starts at opacity:0 so the gradient doesn't sit over the photograph
+       during the Two Planes reveal. Fades in just before the eyebrow arrives.
+       Individual text elements then animate in sequence (eyebrow → city → sub). */
+    body.fl718-santo-domingo-page .fl718-sd-hero__title-block {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 80px 48px 44px;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.58) 0%,
+        rgba(0, 0, 0, 0.22) 55%,
+        rgba(0, 0, 0, 0) 100%
+      );
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Eyebrow — "Dominican Republic" — Playfair Display 400 uppercase, letter-spaced */
+    body.fl718-santo-domingo-page .fl718-sd-hero__eyebrow {
+      display: block;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(11px, 0.9vw, 12px);
+      font-weight: 400;
+      font-style: normal;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.65);
+      margin-bottom: clamp(6px, 0.7vw, 10px);
+      opacity: 0;
+    }
+
+    /* City title — "Santo Domingo" — Playfair Display 900 italic: Colonial Weight */
+    body.fl718-santo-domingo-page .fl718-sd-hero__city {
+      display: block;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(32px, 4.5vw, 68px);
+      font-weight: 900;
+      font-style: italic;
+      letter-spacing: -0.02em;
+      line-height: 0.92;
+      color: #ffffff;
+      margin-top: clamp(6px, 0.8vw, 10px);
+      opacity: 0;
+    }
+
+    /* Sub — "La Capital · 2023" — Lora 300 italic: the whisper after the stone */
+    body.fl718-santo-domingo-page .fl718-sd-hero__sub {
+      display: block;
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(11px, 1.1vw, 15px);
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.52);
+      margin-top: clamp(12px, 1.4vw, 18px);
+      opacity: 0;
+    }
+
+    /* Caption — inline continuation of the sub line */
+    body.fl718-santo-domingo-page .fl718-sd-hero__caption {
+      display: inline;
+    }
+
+    /* Reduced motion: reveal all hero elements immediately at their final state.
+       Also covers .fl718-sd-hero__title-block (gradient) which starts at opacity:0. */
+    @media (prefers-reduced-motion: reduce) {
+      body.fl718-santo-domingo-page .fl718-sd-hero__title-block,
+      body.fl718-santo-domingo-page .fl718-sd-hero__eyebrow,
+      body.fl718-santo-domingo-page .fl718-sd-hero__city,
+      body.fl718-santo-domingo-page .fl718-sd-hero__sub {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+
+    /* ============================================================
+       GALLERY GRID — 3-column masonry layout
+       CSS columns masonry — NOT CSS Grid.
+       CSS Grid causes dead vertical space with mixed-height photos.
+       column-count: 3 desktop / 2 tablet / 1 mobile.
+       Each item: break-inside: avoid; margin-bottom: 8px.
+       ============================================================ */
+
+    body.fl718-santo-domingo-page .fl718-sd-grid {
+      /* column-count masonry: no max-width constraint — photo city
+         pages benefit from full-width breathing room. */
+      columns: 3;
+      column-gap: 8px;
+      padding: 8px;
+      padding-top: 14vh;
+      padding-bottom: 12vh;
+    }
+
+    @media (max-width: 768px) {
+      body.fl718-santo-domingo-page .fl718-sd-grid {
+        columns: 2;
+        padding-top: 10vh;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-grid {
+        columns: 1;
+        padding: 8px;
+        padding-top: 8vh;
+        padding-bottom: 8vh;
+      }
+    }
+
+    /* ------------------------------------------------------------
+       GALLERY ITEMS — shared base
+       break-inside: avoid — prevents masonry column breaks mid-image.
+       margin: 0 to override browser UA margin on <figure>.
+       overflow: clip required — clip-path on img must not overflow column.
+       opacity NOT set here — Rain Curtain hides via clip-path on img,
+       not opacity on figure. Setting both creates double-invisible flicker.
+       ------------------------------------------------------------ */
+
+    body.fl718-santo-domingo-page .fl718-sd-item {
+      break-inside: avoid;
+      margin: 0 0 8px 0;
+      overflow: clip;
+      cursor: pointer;
+      position: relative;
+      display: block;
+    }
+
+    /* "The Rain Curtain" — starting state on img.
+       clip-path: inset(0 0 100% 0) = fully clipped from below, hidden.
+       As bottom inset → 0%, photo reveals top-to-bottom (sky first, then street).
+       filter: blur(2px) dissipates as the curtain lifts.
+       No opacity: 0 — clip-path handles visibility. */
+    body.fl718-santo-domingo-page .fl718-sd-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      clip-path: inset(0 0 100% 0);
+      filter: blur(2px);
+    }
+
+    /* ============================================================
+       HOVER EFFECT — PLACEHOLDER
+       TBD in prototyping. The set has strong geometric shadows —
+       a hover that plays with contrast or light is the direction.
+       Placeholder: a subtle dark veil fades in on hover.
+       Replace with the page-specific hover technique.
+
+       ANIMATION HOOK: HOVER EFFECT TBD — see JS sfWarmInit pattern
+       from Santa Fe for architecture reference. City version should
+       be distinct: consider CSS filter contrast shift, or a geometric
+       veil that reinforces the shadow character of the set.
+       ============================================================ */
+
+    /* ============================================================
+       HOVER EFFECT — "The Window Frame"
+
+       The interior/exterior threshold from the hero repeats as hover
+       vocabulary. A radial-gradient vignette darkens the edges while
+       preserving a clear center aperture — a window frame pressed
+       inward from all sides. Not a flat veil: the center holds clear.
+
+       The gradient is baked into CSS (GSAP cannot tween gradient
+       strings). GSAP tweens opacity only: 0 → 1 on enter, 1 → 0 on
+       leave. The warm-dark tone (not cold black) stays in the city's
+       concrete palette.
+
+       On enter: 0 → 1, 0.5s, power2.out. The frame closes in.
+       On leave: 1 → 0, 0.65s, power2.inOut. Steps back gently.
+       ============================================================ */
+
+    body.fl718-santo-domingo-page .fl718-sd-item__veil {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      will-change: opacity;
+
+      /* Radial vignette — window frame from all edges.
+         Center clear, edges dark. The aperture of looking through glass.
+         62% × 58% ellipse: slightly wider than tall, window proportion. */
+      background: radial-gradient(
+        ellipse 62% 58% at 50% 50%,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0) 35%,
+        rgba(6, 4, 2, 0.28) 62%,
+        rgba(8, 6, 3, 0.68) 100%
+      );
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body.fl718-santo-domingo-page .fl718-sd-item__veil {
+        display: none !important;
+      }
+      body.fl718-santo-domingo-page .fl718-sd-item img {
+        clip-path: none !important;
+        filter: none !important;
+      }
+    }
+
+    /* ============================================================
+       LIGHTBOX — "The Glass Pane" (page-specific)
+       Three fixed-position layers (z-ordered):
+         9000: .fl718-sd-lb-dark  — venetian-strip container; strips
+                                    are JS-built children that scaleY-seal
+                                    top-to-bottom on open (rain shutters
+                                    closing) and peel bottom-to-top on
+                                    close (light returning).
+         9100: .fl718-sd-lb-stage — photograph centered; the wrap slides
+                                    in from the right on open and out
+                                    again on close. Horizontal slide for
+                                    prev/next nav too.
+         9200: .fl718-sd-lb-ui   — close, nav, counter
+
+       The lightbox extends the page's "looking through things" register:
+       hero is two worlds sealing at a window line, grid reveal is rain
+       lifting, hover is a window frame pressed inward. The lightbox
+       seals like rain shutters and slides the photograph through a frame.
+
+       SAFARI: no clip-path + GSAP filter on the photo element. Strips
+       use scaleY only; photo wrap uses x + opacity only. Dark layer
+       has overflow: clip so strip overflow can never bleed.
+    ============================================================ */
+
+    /* Layer 1: Dark — strip container.
+       Starts at opacity:0; on open we set opacity:1 BEFORE strips animate
+       so the strips become visible as they scaleY in. The dark layer
+       background is transparent — the strips themselves carry the warm
+       dark color. This way the dark only exists where strips have sealed. */
+    body.fl718-santo-domingo-page .fl718-sd-lb-dark {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: transparent;
+      pointer-events: none;
+      opacity: 0;
+      /* overflow: clip so strip transforms can never overflow the viewport
+         (unlike overflow:hidden, clip does not create a new scroll container
+         and does not break position:sticky elsewhere). */
+      overflow: clip;
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-dark--active {
+      pointer-events: auto;
+    }
+
+    /* Venetian strips — JS-built children of .fl718-sd-lb-dark.
+       Each strip is a horizontal band: width 100%, height = 100% / strip count.
+       Starting state: scaleY(0) from transform-origin: top center — collapsed
+       at the top edge, invisible. On open: each strip scaleY 0→1 staggered
+       top→bottom (rain shutters closing). On close: scaleY 1→0 from
+       transform-origin: bottom center, staggered bottom→top (light returning).
+       Color is the warm dark concrete of this page — never flat black. */
+    body.fl718-santo-domingo-page .fl718-sd-lb-strip {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      /* height + top set inline by JS as 100% / SD_STRIP_COUNT */
+      background: rgba(14, 10, 6, 0.97);
+      transform: scaleY(0);
+      transform-origin: top center;
+    }
+
+    /* Layer 2: Stage — positioning layer only. Always opaque; the
+       photo wrap inside carries the slide-in animation (opacity + x). */
+    body.fl718-santo-domingo-page .fl718-sd-lb-stage {
+      position: fixed;
+      inset: 0;
+      z-index: 9100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-stage--active {
+      pointer-events: auto;
+    }
+
+    /* Photo wrap — the GSAP slide target.
+       Starts at opacity:0, x:80 (set by JS). On open: x → 0, opacity → 1
+       (photo slides in from the right, like a print being placed in a frame).
+       On close: x → 80, opacity → 0. On nav: exits one direction, re-enters
+       from the opposite side. */
+    body.fl718-santo-domingo-page .fl718-sd-lb-image-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: calc(100vw - 120px);
+      max-height: calc(100dvh - 120px);
+      opacity: 0;
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-image {
+      max-width: 100%;
+      max-height: calc(100dvh - 120px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      /* No will-change on the image — the wrap is the transform target.
+         No CSS filter on the photo (Safari black-flash trap with GSAP). */
+    }
+
+    /* Backdrop — full-layer click-to-close region.
+       Sibling of the image-wrap (NOT a child) so the wrap can transform
+       independently. Sits behind the wrap; the wrap captures clicks on
+       the photograph itself, the backdrop captures clicks anywhere else. */
+    body.fl718-santo-domingo-page .fl718-sd-lb-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      cursor: default;
+    }
+
+    /* Layer 3: UI */
+    body.fl718-santo-domingo-page .fl718-sd-lb-ui {
+      position: fixed;
+      inset: 0;
+      z-index: 9200;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-ui--active {
+      pointer-events: auto;
+    }
+
+    /* Close button */
+    body.fl718-santo-domingo-page .fl718-sd-lb-close-btn {
+      position: absolute;
+      top: clamp(1rem, 2vh, 1.6rem);
+      right: clamp(1rem, 2vw, 1.6rem);
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      color: rgba(248, 244, 236, 0.75);
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-close-btn:hover {
+      color: rgba(248, 244, 236, 1);
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-close-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 1.2;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    /* Counter */
+    body.fl718-santo-domingo-page .fl718-sd-lb-counter {
+      position: absolute;
+      bottom: clamp(1.2rem, 2.5vh, 2rem);
+      left: 50%;
+      transform: translateX(-50%);
+      /* PLACEHOLDER: DM Sans until hero typography is decided.
+         Counter font should match the page's hero/display typeface. */
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-weight: 300;
+      font-size: 0.80rem;
+      color: rgba(248, 244, 236, 0.50);
+      letter-spacing: 0.16em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* Prev/next nav */
+    body.fl718-santo-domingo-page .fl718-sd-lb-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      color: rgba(248, 244, 236, 0.55);
+      transition: color 0.2s;
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-nav:hover {
+      color: rgba(248, 244, 236, 0.9);
+    }
+
+    /* Nav arrows hidden at the ends — wrap-around is on, so this is currently
+       unused, but the class exists if we ever switch to clamped navigation. */
+    body.fl718-santo-domingo-page .fl718-sd-lb-nav.fl718-sd-lb-nav--hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-prev { left: clamp(0.8rem, 2vw, 1.6rem); }
+    body.fl718-santo-domingo-page .fl718-sd-lb-next { right: clamp(0.8rem, 2vw, 1.6rem); }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-nav svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 1.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    body.fl718-santo-domingo-page .fl718-sd-lb-close-btn:focus-visible,
+    body.fl718-santo-domingo-page .fl718-sd-lb-nav:focus-visible {
+      outline: 2px solid rgba(248, 244, 236, 0.5);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 768px) {
+      body.fl718-santo-domingo-page .fl718-sd-lb-image-wrap {
+        max-width: 100vw;
+        max-height: 100svh;
+      }
+      body.fl718-santo-domingo-page .fl718-sd-lb-image {
+        max-height: calc(100svh - 120px);
+      }
+      body.fl718-santo-domingo-page .fl718-sd-lb-prev { left: 0.25rem; }
+      body.fl718-santo-domingo-page .fl718-sd-lb-next { right: 0.25rem; }
+    }
+
+    /* Reduced motion — Glass Pane animation suppressed.
+       Lightbox appears immediately at its final state. The strip array
+       snaps to scaleY(1) so the dark field is solid. The photo wrap
+       snaps to opacity:1 x:0. JS also handles these via gsap.set in the
+       reduced-motion branch — these CSS rules are the no-JS safety net. */
+    @media (prefers-reduced-motion: reduce) {
+      body.fl718-santo-domingo-page .fl718-sd-lb-dark {
+        opacity: 1 !important;
+      }
+      body.fl718-santo-domingo-page .fl718-sd-lb-strip {
+        transform: scaleY(1) !important;
+      }
+      body.fl718-santo-domingo-page .fl718-sd-lb-image-wrap {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      body.fl718-santo-domingo-page .fl718-sd-lb-ui {
+        opacity: 1 !important;
+      }
+    }
+
+    /* ============================================================
+       AFTER-CONTENT — CONCEPT E SYNTHESIS
+       Dateline → rule → eyebrow → photo strip → bottom rule → taxonomy.
+       Scoped to body.fl718-santo-domingo-page throughout.
+    ============================================================ */
+
+    /* ── Container ─────────────────────────────────────────────── */
+    body.fl718-santo-domingo-page .fl718-intl-after {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 80px 40px 140px;
+    }
+
+    /* ── 1. DATELINE ─────────────────────────────────────────── */
+    body.fl718-santo-domingo-page .fl718-intl-after__dateline {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0;
+      margin-bottom: 40px;
+    }
+
+    body.fl718-santo-domingo-page .fl718-intl-after__city {
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #3d3530;
+    }
+
+    body.fl718-santo-domingo-page .fl718-intl-after__sep {
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px;
+      font-weight: 400;
+      color: #ccc6bc;
+      margin: 0 20px;
+      user-select: none;
+    }
+
+    body.fl718-santo-domingo-page .fl718-intl-after__coords {
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: #9a9088;
+    }
+
+    body.fl718-santo-domingo-page .fl718-intl-after__year {
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: #9a9088;
+    }
+
+    /* ── 2. DIVIDER RULE ──────────────────────────────────────── */
+    body.fl718-santo-domingo-page .fl718-intl-after__rule {
+      width: 100%;
+      height: 1px;
+      background: #ccc6bc;
+      margin-bottom: 36px;
+      transform-origin: left center;
+    }
+
+    /* ── 3. EYEBROW ───────────────────────────────────────────── */
+    body.fl718-santo-domingo-page .fl718-intl-after__eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: #9a9088;
+      margin-bottom: 24px;
+    }
+
+    /* ── 4. PHOTO STRIP ───────────────────────────────────────── */
+    body.fl718-santo-domingo-page .fl718-intl-after__strip {
+      display: flex;
+      gap: 14px;
+      overflow-x: scroll;
+      /* overflow-y: per spec, cannot be visible when overflow-x is scroll —
+         browser promotes it to auto. Ping and flash elements are contained
+         within photo-wrap (overflow:hidden). Burst chars use position:fixed
+         on body and are unaffected by this container. */
+      -webkit-overflow-scrolling: touch;
+      touch-action: manipulation;
+      scroll-snap-type: x mandatory;
+      padding: 4px 24px 8px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin-bottom: 36px;
+    }
+
+    body.fl718-santo-domingo-page .fl718-intl-after__strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Trailing spacer — forces right-edge padding to hold in Safari,
+       and provides enough trailing width for card 5 to snap to the
+       left-padding position (scrollLeft ≈ 676px requires total content
+       width ≥ 1069px; 24px pad + 5×155 + 4×14 + 214px cap = 1069px). */
+    body.fl718-santo-domingo-page .fl718-intl-after__strip-cap {
+      flex: 0 0 214px;
+      width: 214px;
+      height: 1px;
+      pointer-events: none;
+    }
+
+    /* Each city card */
+    body.fl718-santo-domingo-page .fl718-ws-city {
+      flex: 0 0 155px;
+      width: 155px;
+      cursor: default;
+      text-decoration: none;
+      display: block;
+      scroll-snap-align: start;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body.fl718-santo-domingo-page .fl718-ws-city--linked {
+      cursor: pointer;
+    }
+
+    /* Photo frame */
+    body.fl718-santo-domingo-page .fl718-ws-city__photo-wrap {
+      width: 155px;
+      height: 104px; /* 3:2 */
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 10px;
+      background: #c8c4bc;
+    }
+
+    body.fl718-santo-domingo-page .fl718-ws-city__photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+      /* opacity/filter controlled by JS depth-of-field effect */
+    }
+
+    /* Camera flash overlay — white, flashes on tap link-out */
+    body.fl718-santo-domingo-page .fl718-ws-city__flash {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    /* GPS coordinate ping — overlaid inside photo, bottom-left */
+    body.fl718-santo-domingo-page .fl718-ws-city__ping {
+      position: absolute;
+      bottom: 8px;
+      left: 6px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    /* Coming-soon overlay */
+    body.fl718-santo-domingo-page .fl718-ws-city__overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 5px 8px;
+      background: rgba(61, 53, 48, 0.52);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(245, 243, 239, 0.75);
+      display: none;
+    }
+
+    body.fl718-santo-domingo-page .fl718-ws-city--coming-soon .fl718-ws-city__overlay {
+      display: block;
+    }
+
+    /* City name */
+    body.fl718-santo-domingo-page .fl718-ws-city__name {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9a9088;
+      white-space: nowrap;
+    }
+
+    /* Country/region label */
+    body.fl718-santo-domingo-page .fl718-ws-city__region {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #ccc6bc;
+      margin-top: 3px;
+    }
+
+    /* ── 5. BOTTOM RULE ───────────────────────────────────────── */
+    body.fl718-santo-domingo-page .fl718-intl-after__bottom-rule {
+      width: 100%;
+      height: 1px;
+      background: #ccc6bc;
+      margin-bottom: 28px;
+    }
+
+    /* ── 6. TAXONOMY ──────────────────────────────────────────── */
+    body.fl718-santo-domingo-page .fl718-intl-after__taxonomy {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      row-gap: 18px;
+      column-gap: 16px;
+      padding-top: 4px;
+    }
+
+    body.fl718-santo-domingo-page .fl718-intl-after__tax-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #9a9088;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    body.fl718-santo-domingo-page .fl718-intl-after__tax-link:hover {
+      color: #3d3530;
+    }
+
+    body.fl718-santo-domingo-page .fl718-intl-after__tax-sep {
+      display: none;
+    }
+
+    /* ── Wipe bar — full-viewport dark overlay, sweeps left→right on link-out */
+    body.fl718-santo-domingo-page .fl718-sd-wipe-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #111;
+      transform: translateX(-100%);
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Burst chars — fixed-position spans appended to body during link-out */
+    body.fl718-santo-domingo-page .fl718-sd-burst-char {
+      position: fixed;
+      font-family: 'Courier Prime', monospace;
+      font-size: 9px;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+      z-index: 200;
+      white-space: nowrap;
+    }
+
+    /* ── Animation initial states ──────────────────────────────── */
+    @media (prefers-reduced-motion: no-preference) {
+      body.fl718-santo-domingo-page .fl718-intl-after__dateline  { opacity: 0; } /* JS sets to 1 before char split */
+      body.fl718-santo-domingo-page .fl718-intl-after__rule      { transform: scaleX(0); }
+      body.fl718-santo-domingo-page .fl718-intl-after__eyebrow   { opacity: 0; }
+      body.fl718-santo-domingo-page .fl718-ws-city               { opacity: 0; }
+      body.fl718-santo-domingo-page .fl718-intl-after__bottom-rule { opacity: 0; }
+      body.fl718-santo-domingo-page .fl718-intl-after__taxonomy  { opacity: 0; } /* JS sets to 1 before char split */
+    }
+
+    /* ── Mobile ──────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      body.fl718-santo-domingo-page .fl718-intl-after {
+        padding: 64px 0 100px;
+      }
+
+      body.fl718-santo-domingo-page .fl718-intl-after__dateline {
+        padding: 0 24px;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      body.fl718-santo-domingo-page .fl718-intl-after__sep {
+        display: none;
+      }
+
+      body.fl718-santo-domingo-page .fl718-intl-after__rule,
+      body.fl718-santo-domingo-page .fl718-intl-after__bottom-rule {
+        margin-left: 24px;
+        margin-right: 24px;
+        width: calc(100% - 48px);
+      }
+
+      body.fl718-santo-domingo-page .fl718-intl-after__eyebrow {
+        padding: 0 24px;
+      }
+
+      body.fl718-santo-domingo-page .fl718-intl-after__taxonomy {
+        padding: 20px 24px 0;
+      }
+    }
+
+    /* ============================================================
+       PREFERS-REDUCED-MOTION + NO-JS FALLBACKS
+
+       CRITICAL: elements starting at opacity:0 must be visible
+       if JS fails or reduced motion is active. These rules
+       ensure content is never permanently hidden.
+       ============================================================ */
+
+    /* Reduced motion: show all grid photos and hero immediately */
+    @media (prefers-reduced-motion: reduce) {
+      body.fl718-santo-domingo-page .fl718-sd-hero__img-left,
+      body.fl718-santo-domingo-page .fl718-sd-hero__img-right {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: brightness(1.0) saturate(1.0) !important;
+      }
+      body.fl718-santo-domingo-page .fl718-sd-hero__title-block {
+        opacity: 1 !important;
+      }
+    }
+
+    /* No-JS: show everything immediately.
+       Rain Curtain hides via clip-path + filter on img — both rules needed. */
+    body.fl718-santo-domingo-page:not(.fl718-js-loaded) .fl718-sd-item {
+      opacity: 1;
+    }
+    body.fl718-santo-domingo-page:not(.fl718-js-loaded) .fl718-sd-item img {
+      clip-path: none;
+      filter: none;
+    }
+
+    body.fl718-santo-domingo-page:not(.fl718-js-loaded) .fl718-sd-hero__img-left,
+    body.fl718-santo-domingo-page:not(.fl718-js-loaded) .fl718-sd-hero__img-right {
+      opacity: 1;
+      filter: brightness(1.0) saturate(1.0);
+    }
+
+    body.fl718-santo-domingo-page:not(.fl718-js-loaded) .fl718-sd-hero__title-block {
+      opacity: 1;
+    }
+
+    /* ============================================================
+       MOBILE OVERRIDES (≤480px)
+       These override the desktop defaults for phone viewports.
+       Added for the mobile build — not present in the desktop file.
+       ============================================================ */
+
+    /* iOS Safari overflow-x fallback — clip is correct, but older iOS
+       versions (≤15) may not support it. Double declaration: hidden first
+       (old iOS reads this), then clip overrides on modern browsers. */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page {
+        overflow-x: hidden;
+        overflow-x: clip;
+      }
+    }
+
+    /* Hero image crop — mobile uses a different hero photograph
+       (couple in rain, shot through bars). Subjects are in the
+       lower-center of the frame. Pull crop down to anchor on
+       the people, not the concrete overhang above them. */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-hero__img-left,
+      body.fl718-santo-domingo-page .fl718-sd-hero__img-right {
+        object-position: center 60%;
+      }
+    }
+
+    /* Hero height — use svh (small viewport height) on mobile so the
+       hero fits within Safari's visible area when the toolbar is shown.
+       100vh on iOS = large viewport (toolbar hidden), which is taller
+       than what you actually see on first load. svh = what you see. */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-hero {
+        height: 100svh;
+      }
+    }
+
+    /* Hero title block — lift well above Safari's bottom toolbar + home bar.
+       100px bottom padding + safe-area ensures all three text lines
+       (eyebrow + city + sub) sit fully visible within the hero. */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-hero__title-block {
+        padding: 48px 20px calc(54px + env(safe-area-inset-bottom, 0px));
+      }
+    }
+
+    /* Hero city title — desktop clamp floors at ~17px at 375px, way too small.
+       Mobile: ~37px at 375px, scales up to ~48px at wider phones. */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-hero__city {
+        font-size: clamp(2.0rem, 10vw, 3.2rem);
+      }
+    }
+
+    /* Hero eyebrow — slight tightening for narrow viewport */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-hero__eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.20em;
+      }
+    }
+
+    /* Hero sub — reduce font slightly for narrow viewport */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-hero__sub {
+        font-size: 11px;
+        letter-spacing: 0.06em;
+      }
+    }
+
+    /* Hero caption ("The Sun, The Rain...") — force onto its own line
+       below "La Capital · 2023", single line, no wrapping. */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-hero__caption {
+        display: block;
+        white-space: nowrap;
+        margin-top: 4px;
+      }
+    }
+
+    /* Grid — increase side padding for thumb comfort (8px felt tight on
+       earlier mobile builds; 12px gives photos breathing room). */
+    @media (max-width: 480px) {
+      body.fl718-santo-domingo-page .fl718-sd-grid {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+    }
+
+    /* Lightbox — overscroll containment prevents iOS rubber-banding
+       from bleeding through when swiping inside the lightbox. */
+    @media (max-width: 768px) {
+      body.fl718-santo-domingo-page .fl718-sd-lb-dark,
+      body.fl718-santo-domingo-page .fl718-sd-lb-stage,
+      body.fl718-santo-domingo-page .fl718-sd-lb-ui {
+        overscroll-behavior: contain;
+      }
+    }
+
+  </style>
+</head>
+
+<body class="fl718-santo-domingo-page">
+
+  <!-- ============================================================
+       HERO — Interior/exterior threshold photograph
+       The tourist painting inside the room. The city through the window.
+       Fantasy and fact, inside and outside — the whole page in one frame.
+
+       ANIMATION: "Two Planes" — two clipped copies of the same photo
+       slide in from opposite sides (interior from left, exterior from right),
+       sealing at the window frame line with a brief 1px seam. Title block
+       fades in after the photograph assembles.
+
+       NOTE: hero loaded eager + sync — first visible element.
+       PRE-LAUNCH: Re-export at 2560px via Lightroom Hero preset.
+       PRE-LAUNCH: Add descriptive alt text (deferred to accessibility pass).
+  ============================================================ -->
+  <section class="fl718-sd-hero" aria-label="Santo Domingo, Dominican Republic hero photograph">
+
+    <h1 class="fl718-sd-visually-hidden">Santo Domingo, Dominican Republic</h1>
+
+    <!--
+      TWO PLANES — "Two Planes" hero animation.
+      Two copies of the same photograph, each clipped to one half.
+      Left: the interior (room, curtains, the tourist painting) — enters from the left.
+      Right: the exterior (window, city, Caribbean light) — enters from the right.
+      They seal at the window frame line. You have seen the seam.
+    -->
+    <img
+      class="fl718-sd-hero__img-left"
+      id="sdHeroImgLeft"
+      src="../santo-domingo-assets/santo-domingo-dominican-republic-candid-moment-couple-rain-2022.jpg"
+      alt="Two people in the rain in Santo Domingo, seen through iron bars — one walking, one sheltering in a doorway"
+      loading="eager"
+      decoding="sync"
+      width="1920"
+      height="1536"
+      draggable="false">
+
+    <img
+      class="fl718-sd-hero__img-right"
+      id="sdHeroImgRight"
+      src="../santo-domingo-assets/santo-domingo-dominican-republic-candid-moment-couple-rain-2022.jpg"
+      alt=""
+      aria-hidden="true"
+      loading="eager"
+      decoding="sync"
+      width="1920"
+      height="1536"
+      draggable="false">
+
+    <!-- The seam — the window frame made visible for one suspended moment -->
+    <div class="fl718-sd-hero__seam" id="sdHeroSeam" aria-hidden="true"></div>
+
+    <!-- Title block — text elements animate in sequence after photograph assembles -->
+    <div class="fl718-sd-hero__title-block" id="sdHeroTitleBlock" aria-hidden="true">
+      <span class="fl718-sd-hero__eyebrow" id="sdHeroEyebrow">Dominican Republic</span>
+      <span class="fl718-sd-hero__city" id="sdHeroCity">Santo Domingo</span>
+      <span class="fl718-sd-hero__sub" id="sdHeroSub">La Capital &nbsp;&middot;&nbsp; 2023 &nbsp;&middot;&nbsp; <span class="fl718-sd-hero__caption" id="sdHeroCaption">The Sun, The Rain, And The Time In Between</span></span>
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       GALLERY GRID — 3-col masonry layout
+       CSS columns masonry (column-count: 3). NOT CSS Grid.
+       All photos digital — data-medium="digital" on all figures.
+       No data-film attribute — lightbox badge suppressed.
+
+       PHOTO SEQUENCING (editorial notes, confirmed):
+         Arc: arrival → city in motion → architecture/geometry →
+           stillness/waiting → rain → the park →
+           street portraits/color → closing.
+
+       FILENAME NOTE: Two photos have a leading space in " geometric"
+       within their filename. This matches the actual Dropbox filenames
+       exactly — use verbatim. These are:
+         "santo-domingo-dominican-republic-geometric-composition-woman-2022.jpg"
+         "santo-domingo-dominican-republic-candid-moment-geometric-composition-rain-2022.jpg"
+       Both files are confirmed present in the Dropbox folder.
+
+       GRID ENTRANCE ANIMATION HOOK:
+         GRID ENTRANCE ANIMATION TBD — per editorial notes, each location
+         page gets its own entrance vocabulary. The rain/shadow/geometry
+         character of this set may suggest a light-based or contrast reveal,
+         but this is open. Do not reuse an existing pattern unchanged.
+         Stand-in: per-item opacity fade via IntersectionObserver (see JS).
+
+       PRODUCTION TODO: Add srcset + WebP per QA checklist.
+       PRODUCTION TODO: Add alt text during pre-launch accessibility pass.
+  ============================================================ -->
+  <main id="fl718-sd-grid-main" aria-label="Santo Domingo, Dominican Republic photograph gallery">
+    <div class="fl718-sd-grid">
+
+      <!-- GRID ENTRANCE ANIMATION TBD — opacity fade stand-in wired in JS.
+           Replace with page-specific entrance technique in prototyping. -->
+
+      <!-- 01 — arrival — wide street, urban tempo, opener -->
+      <figure class="fl718-sd-item" data-index="0" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/dominican-republic-santo-domingo-city-rhythm-documentary-tradition-2022.jpg"
+          alt="Street-level view of Santo Domingo — urban tempo, documentary street photography"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 02 — faces, dusk, park — immediate contrast: people up close after wide street -->
+      <figure class="fl718-sd-item" data-index="1" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-portrait-park-boys-2022.jpg"
+          alt="Boys in a Santo Domingo park — portrait, confidence shading into something more complex"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 03 — bus vendor woman — basket head, bus behind, distinctive foreground -->
+      <figure class="fl718-sd-item" data-index="2" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-bus-vendor-woman-spontaneous-moment-2022.jpg"
+          alt="A woman vendor at a Santo Domingo bus stop — purposeful, spontaneous, strong color"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 04 — pure geometry — concrete tower, grey sky, no people -->
+      <figure class="fl718-sd-item" data-index="3" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-architecture-lines-2022.jpg"
+          alt="Architectural lines in Santo Domingo — structural pause, cold geometry"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 05 — rain bars #1 — man asleep, most stark, mood shifts -->
+      <figure class="fl718-sd-item" data-index="4" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-candid-portrait-man-asleep-rain-2022.jpg"
+          alt="A man asleep in the rain in Santo Domingo — candid portrait, social reality"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 06 — walking shutters #1 — man, closed storefronts, shadow -->
+      <figure class="fl718-sd-item" data-index="5" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-walking-colors-light-shadow-2022.jpg"
+          alt="A figure walking through light and shadow in Santo Domingo — geometry, color, street"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 07 — bus boarding #1 — green bus, man stepping on -->
+      <figure class="fl718-sd-item" data-index="6" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-bus-candid-urban-transport-daily-life-2022.jpg"
+          alt="Inside a Santo Domingo bus — daily transit, urban transport, daily life"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 08 — color burst — Caribe Dos corner, green wall, communal -->
+      <figure class="fl718-sd-item" data-index="7" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-candid-portrait-colors-men-2022.jpg"
+          alt="Men on the street in Santo Domingo — communal, social, vivid color"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 09 — park boys #2 — same kids, contemplative, 7 positions from #1 -->
+      <figure class="fl718-sd-item" data-index="8" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-portrait-park-boys-2-2022.jpg"
+          alt="Boys in a Santo Domingo park — contemplative, a quieter moment than the previous"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 10 — open street, warm light — solitary figure, pedestrian crossing -->
+      <figure class="fl718-sd-item" data-index="9" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/dominican-republic-santo-domingo-pedestrian-crossing-late-afternoon-glow-2022.jpg"
+          alt="A solitary figure at a pedestrian crossing in Santo Domingo, bathed in late-afternoon glow"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 11 — rain bars #2 — couple sheltering, tender, 6 positions from #1 -->
+      <figure class="fl718-sd-item" data-index="10" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-candid-moment-couple-rain-2022.jpg"
+          alt="A couple sheltering from rain in Santo Domingo — tender, candid, vulnerable"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 12 — van, women, pink bag — different vehicle register, intimate -->
+      <figure class="fl718-sd-item" data-index="11" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-van-candid-moment-woman-look-back-2022.jpg"
+          alt="A woman looks back from a van window in Santo Domingo — candid human moment inside the transport network"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 13 — park wide shot — basketball, action, open space -->
+      <figure class="fl718-sd-item" data-index="12" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-basketball-kids-joy-park-2022.jpg"
+          alt="Kids playing basketball in a Santo Domingo park — open energy, joy, burst of brightness"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 14 — walking shutters #2 — same man, further along, 8 positions from #1 -->
+      <figure class="fl718-sd-item" data-index="13" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-walking-colors-light-shadow-2-2022.jpg"
+          alt="A second figure moving through light and shadow in Santo Domingo — companion to the previous"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 15 — bus boarding #2 — same green bus, 8 positions from #1 -->
+      <figure class="fl718-sd-item" data-index="14" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-bus-urban-transport-daily-life-2022.jpg"
+          alt="Santo Domingo bus passengers — collective, anonymous urban transport"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 16 — barred interior — enclosed, private, still -->
+      <figure class="fl718-sd-item" data-index="15" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-perspective-daily-life-2022.jpg"
+          alt="An enclosed barred interior space in Santo Domingo — perspective, daily life, private"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 17 — rain bars #3 — geometric lines, most abstract, 6 positions from #2 -->
+      <figure class="fl718-sd-item" data-index="16" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-geometric-composition-lines-rain-man-2022.jpg"
+          alt="A man beneath geometric lines in the rain in Santo Domingo — the most abstract photograph, stark"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 18 — commuter portrait — bus passenger, interior, face -->
+      <figure class="fl718-sd-item" data-index="17" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/dominican-republic-santo-domingo-passenger-portrait-commuter-culture-2022.jpg"
+          alt="Portrait of a bus passenger in Santo Domingo — commuter culture, interior bus life"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 19 — park boys #3 — intimate, quiet, 10 positions from #1, 10 from #2 -->
+      <figure class="fl718-sd-item" data-index="18" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-portrait-park-boys-3-2022.jpg"
+          alt="Boys in a Santo Domingo park — intimate, quiet, the most tender of the three"
+          width="1920" height="1280"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 20 — rain geometry — different angle from rain bars, atmospheric
+           The src below uses the verbatim Dropbox filename including the space. -->
+      <figure class="fl718-sd-item" data-index="19" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-candid-moment-geometric-composition-rain-2022.jpg"
+          alt="A candid geometric moment in the rain in Santo Domingo — atmospheric, abstract"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 21 — bus #3 — man in white, tree foreground, different feel, 14 positions from #1 -->
+      <figure class="fl718-sd-item" data-index="20" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-bus-urban-transport-2022.jpg"
+          alt="Street-level waiting at a Santo Domingo bus stop — urban transport"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 22 — geometry + figure — woman, abstract composition
+           The src below uses the verbatim Dropbox filename including the space.
+           If file is not recovered on server, remove this figure and renumber. -->
+      <figure class="fl718-sd-item" data-index="21" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-geometric-composition-woman-2022.jpg"
+          alt="A woman in a geometric composition in Santo Domingo — 2022"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 23 — wind-down — ethereal light, interior/window, quiet
+           Same photograph as the hero. Tentative position — may be removed
+           after reviewing whether the bookend effect lands or feels redundant.
+           If cut, re-index the closer below from data-index="23" to data-index="22". -->
+      <figure class="fl718-sd-item" data-index="22" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/dominican-republic-santo-domingo-ethereal-light-shadow-play-2022.jpg"
+          alt="Interior room with a framed beach painting visible on the wall, and through the window the real Santo Domingo city outside — the tourist fantasy next to daily reality"
+          width="1920" height="1536"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+      <!-- 24 — CONFIRMED CLOSER — child at Loteka lottery kiosk.
+           Solitary, innocent, quietly devastating. No statement needed.
+           This is the final image in the sequence. -->
+      <figure class="fl718-sd-item" data-index="23" data-medium="digital">
+        <img
+          src="../santo-domingo-assets/santo-domingo-dominican-republic-village-store-child-candid-2022.jpg"
+          alt="A child alone at a Loteka lottery kiosk in Santo Domingo — solitary, innocent"
+          width="1920" height="1280"
+          loading="lazy"
+          decoding="async">
+        <div class="fl718-sd-item__veil" aria-hidden="true"></div>
+      </figure>
+
+    </div>
+  </main>
+
+
+  <!-- ============================================================
+       LIGHTBOX — "The Glass Pane" (page-specific)
+       Three fixed-position layers. Venetian-strip seal + horizontal
+       photo slide. All photos digital — no film badge rendered.
+  ============================================================ -->
+
+  <!-- Lightbox dialog root — wraps all three layers so role="dialog"
+       encompasses the photograph, not just the controls. -->
+  <div id="sdLbRoot" role="dialog" aria-modal="true"
+       aria-label="Santo Domingo photograph viewer" aria-hidden="true">
+
+  <!-- Layer 1: Dark — strip container.
+       Strips are JS-built (sdBuildStrips, SD_STRIP_COUNT = 9).
+       Empty in the markup; populated on DOMContentLoaded. -->
+  <div class="fl718-sd-lb-dark" id="sdLbDark"></div>
+
+  <!-- Layer 2: Stage — photograph centered.
+       Backdrop is a sibling of (not inside) the image-wrap so the wrap
+       can transform without dragging the click-to-close region with it. -->
+  <div class="fl718-sd-lb-stage" id="sdLbStage">
+    <div class="fl718-sd-lb-backdrop" id="sdLbBackdrop"></div>
+    <div class="fl718-sd-lb-image-wrap" id="sdLbImageWrap">
+      <img class="fl718-sd-lb-image" id="sdLbImage" alt="" loading="eager" decoding="async">
+    </div>
+  </div>
+
+  <!-- Layer 3: UI — close, nav, counter -->
+  <div class="fl718-sd-lb-ui" id="sdLbUi">
+
+    <!-- Close button -->
+    <button class="fl718-sd-lb-close-btn" id="sdLbClose" aria-label="Close photograph viewer" tabindex="-1">
+      <svg viewBox="0 0 18 18" aria-hidden="true">
+        <line x1="2" y1="2" x2="16" y2="16"/>
+        <line x1="16" y1="2" x2="2" y2="16"/>
+      </svg>
+    </button>
+
+    <!-- Prev / next -->
+    <button class="fl718-sd-lb-nav fl718-sd-lb-prev" id="sdLbPrev" aria-label="Previous photograph" tabindex="-1">
+      <svg viewBox="0 0 22 22" aria-hidden="true">
+        <polyline points="14,4 7,11 14,18"/>
+      </svg>
+    </button>
+    <button class="fl718-sd-lb-nav fl718-sd-lb-next" id="sdLbNext" aria-label="Next photograph" tabindex="-1">
+      <svg viewBox="0 0 22 22" aria-hidden="true">
+        <polyline points="8,4 15,11 8,18"/>
+      </svg>
+    </button>
+
+    <!-- Counter -->
+    <div class="fl718-sd-lb-counter" id="sdLbCounter" aria-live="polite"></div>
+
+    <!-- No film badge — all photos digital -->
+
+  </div>
+
+  </div><!-- /sdLbRoot dialog wrapper -->
+
+
+  <!-- ============================================================
+       AFTER-CONTENT — CONCEPT E SYNTHESIS
+       Dateline → rule → eyebrow → photo strip (JS-rendered) →
+       bottom rule → taxonomy nav.
+       IDs used by JS: fl718IntlAfter, fl718Dateline, fl718Rule,
+       fl718Eyebrow, fl718Strip, fl718BottomRule, fl718Taxonomy.
+       Wire hrefs when WordPress is ready.
+  ============================================================ -->
+  <aside
+    class="fl718-intl-after"
+    id="fl718IntlAfter"
+    aria-label="Location and related photography">
+
+    <!-- 1. DATELINE — locked rule for all international pages -->
+    <div class="fl718-intl-after__dateline" id="fl718Dateline">
+      <span class="fl718-intl-after__city">Santo Domingo</span>
+      <span class="fl718-intl-after__sep" aria-hidden="true">※</span>
+      <span class="fl718-intl-after__coords" aria-label="Coordinates: 18 degrees 28 minutes North, 69 degrees 56 minutes West">18°28′N 69°56′W</span>
+      <span class="fl718-intl-after__sep" aria-hidden="true">※</span>
+      <span class="fl718-intl-after__year">2023</span>
+    </div>
+
+    <!-- 2. RULE -->
+    <div class="fl718-intl-after__rule" id="fl718Rule" aria-hidden="true"></div>
+
+    <!-- 3. EYEBROW -->
+    <p class="fl718-intl-after__eyebrow" id="fl718Eyebrow">From the Field</p>
+
+    <!-- 4. PHOTO STRIP — JS renders city cards here -->
+    <div class="fl718-intl-after__strip" id="fl718Strip" role="list"></div>
+
+    <!-- 5. BOTTOM RULE -->
+    <div class="fl718-intl-after__bottom-rule" id="fl718BottomRule" aria-hidden="true"></div>
+
+    <!-- 6. TAXONOMY — real site terms for Santo Domingo -->
+    <nav class="fl718-intl-after__taxonomy" id="fl718Taxonomy" aria-label="Browse by category">
+      <a class="fl718-intl-after__tax-link" href="#" aria-label="Browse Street photography">Street Photography</a>
+      <span class="fl718-intl-after__tax-sep" aria-hidden="true">·</span>
+      <a class="fl718-intl-after__tax-link" href="#" aria-label="Browse Architecture collection">Architecture</a>
+      <span class="fl718-intl-after__tax-sep" aria-hidden="true">·</span>
+      <a class="fl718-intl-after__tax-link" href="#" aria-label="Browse Conceptual collection">Conceptual</a>
+      <span class="fl718-intl-after__tax-sep" aria-hidden="true">·</span>
+      <a class="fl718-intl-after__tax-link" href="#" aria-label="Browse Digital format">Digital</a>
+    </nav>
+
+  </aside>
+
+
+  <!-- ============================================================
+       AFTER-CONTENT ANIMATION — CONCEPT E SYNTHESIS
+       Separate IIFE. Own reduced-motion var (sdAfterReducedMotion).
+       Uses ScrollTrigger for scroll-triggered entrance sequence.
+       Var prefix: sdAfter — no collision with main IIFE (sdReducedMotion).
+  ============================================================ -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ═══════════════════════════════════════════════════════════
+         CONFIG — update this block per page
+         ═══════════════════════════════════════════════════════════
+
+         ACTIVE_CITY: the current page — always shown first, marked active.
+
+         SIBLING_CITIES: the confirmed published locations to show.
+           Always list MORE than 4 here. JS picks the first 4.
+           (Reorder to control which 4 appear — top of list wins.)
+
+         COMING_SOON: the next city you're about to publish.
+           Set to null to disable the coming-soon slot entirely.
+           COMING_SOON_ODDS: probability it appears on any given
+           page load (0.33 = ~1 in 3 visits). Adjust as you like.
+      ═══════════════════════════════════════════════════════════ */
+
+      var sdAfterActiveCity = {
+        name:   'Santo Domingo',
+        region: 'Dominican Republic',
+        href:   null, /* null = current page, no link */
+        photo:  '../santo-domingo-assets/dominican-republic-santo-domingo-pedestrian-crossing-late-afternoon-glow-2022.jpg',
+        alt:    'Santo Domingo, Dominican Republic'
+      };
+
+      /* ── LOCATION POOL ───────────────────────────────────────────
+         weight: 2 = international (high preference)
+                 1 = US/Southwest (lower preference, still appears)
+
+         Add every published location here as the site grows.
+         The active city is automatically excluded each page load.
+      ─────────────────────────────────────────────────────────── */
+      var sdAfterLocationPool = [
+
+        /* — International — weight 2 */
+        {
+          name: 'China', region: 'Asia', coords: '35°52′N 104°11′E', weight: 2, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/China/china-candid-portrait-stern-woman-village-life-2022.jpg',
+          alt: 'China'
+        },
+        {
+          name: 'Hong Kong', region: 'Asia', coords: '22°19′N 114°10′E', weight: 2, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/Hong Kong/hong-kong-asia-anonymous-intimacy--reflection-2017.jpg',
+          alt: 'Hong Kong'
+        },
+        {
+          name: 'Peru', region: 'South America', coords: '9°11′S 75°0′W', weight: 2, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/Peru/peru-andes-latin-america-mountain-landscape-portrait-2015.jpg',
+          alt: 'Peru'
+        },
+        {
+          name: 'Istanbul', region: 'Turkey', coords: '41°1′N 28°57′E', weight: 2, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/Turkey/istanbul-turkey-sea-mosques-birds-classic-view-2008.jpg',
+          alt: 'Istanbul, Turkey'
+        },
+        {
+          name: 'Quito', region: 'Ecuador', coords: '0°13′S 78°30′W', weight: 2, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/Ecuador/Quito/ecuador-quito-everyday-poetry-urban-walking-2015.jpg',
+          alt: 'Quito, Ecuador'
+        },
+
+        /* — US / Southwest — weight 1 */
+        {
+          name: 'Grand Canyon', region: 'Arizona', coords: '36°6′N 112°6′W', weight: 1, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/Arizona/Grand Canyon/grand-canyon-35mm-black-white-landscape-2022.jpg',
+          alt: 'Grand Canyon, Arizona'
+        },
+        {
+          name: 'White Sands', region: 'New Mexico', coords: '32°46′N 106°10′W', weight: 1, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/New Mexico/White Sands/white-sands-analog-bw-landscape-desert-2022.jpg',
+          alt: 'White Sands, New Mexico'
+        },
+        {
+          name: 'Monument Valley', region: 'Arizona & Utah', coords: '36°59′N 110°6′W', weight: 1, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/Monument Valley/monument-valley-car-view-duality-landscape-digital-2022.jpg',
+          alt: 'Monument Valley'
+        },
+        {
+          name: 'Taos', region: 'New Mexico', coords: '36°24′N 105°34′W', weight: 1, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/New Mexico/Taos/taos-new-mexico-adobe-portrait-digital-2022.jpg',
+          alt: 'Taos, New Mexico'
+        },
+        {
+          name: 'Santa Fe', region: 'New Mexico', coords: '35°41′N 105°56′W', weight: 1, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/New Mexico/Sante Fe/santa-fe-color-perspective-plants-analog-2022.jpg',
+          alt: 'Santa Fe, New Mexico'
+        },
+        {
+          name: 'Denver', region: 'Colorado', coords: '39°44′N 104°59′W', weight: 1, href: '#',
+          photo: '/Users/seamus_dolan/Library/CloudStorage/Dropbox/Photography/Website/Colorado/Denver/Denver-architecture-lines-bw-analog-2022.jpg',
+          alt: 'Denver, Colorado'
+        }
+      ];
+
+      var sdAfterComingSoon = null;
+      /* Egypt coming-soon card disabled until real Egypt photo exports
+         land in Dropbox. Re-enable by restoring the object:
+         { name: 'Egypt', region: 'North Africa',
+           photo: '[Egypt Dropbox path]', alt: 'Egypt — coming soon' } */
+
+      var sdAfterComingSoonOdds = 0.33; /* ~1 in 3 page loads */
+
+      /* ── WEIGHTED SHUFFLE ────────────────────────────────────────
+         Expands each location by its weight into a flat array,
+         shuffles it, then picks the first N unique locations.
+         Result: international cities appear ~2x as often as US ones,
+         but US locations do surface — just less frequently.
+      ─────────────────────────────────────────────────────────── */
+      function sdAfterWeightedSample(pool, activeName, count) {
+        /* Exclude the active city */
+        var eligible = pool.filter(function (c) {
+          return c.name !== activeName;
+        });
+
+        /* Expand by weight */
+        var expanded = [];
+        eligible.forEach(function (city) {
+          for (var i = 0; i < city.weight; i++) {
+            expanded.push(city);
+          }
+        });
+
+        /* Fisher-Yates shuffle */
+        for (var i = expanded.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = expanded[i];
+          expanded[i] = expanded[j];
+          expanded[j] = tmp;
+        }
+
+        /* Pick first `count` unique cities (by name) */
+        var seen = {};
+        var result = [];
+        for (var k = 0; k < expanded.length && result.length < count; k++) {
+          if (!seen[expanded[k].name]) {
+            seen[expanded[k].name] = true;
+            result.push(expanded[k]);
+          }
+        }
+        return result;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+         STRIP BUILDER
+         ═══════════════════════════════════════════════════════════ */
+
+      function sdAfterBuildStrip() {
+        var strip = document.getElementById('fl718Strip');
+        if (!strip) return;
+
+        /* Decide whether to show coming soon this load */
+        var showComingSoon = sdAfterComingSoon && (Math.random() < sdAfterComingSoonOdds);
+
+        /* 5 slots total — all siblings, no active city in the strip */
+        /* If coming soon shows: 4 siblings + 1 coming soon = 5       */
+        /* If not:               5 siblings = 5                        */
+        var siblingCount = showComingSoon ? 4 : 5;
+        var siblings = sdAfterWeightedSample(sdAfterLocationPool, sdAfterActiveCity.name, siblingCount);
+
+        var cards = [];
+
+        siblings.forEach(function (city) {
+          cards.push(sdAfterBuildCard(city, false, false));
+        });
+
+        if (showComingSoon) {
+          cards.push(sdAfterBuildCard(sdAfterComingSoon, false, true));
+        }
+
+        cards.forEach(function (card) {
+          strip.appendChild(card);
+        });
+
+        /* Trailing spacer — forces right-edge padding to hold in Safari */
+        var cap = document.createElement('div');
+        cap.className = 'fl718-intl-after__strip-cap';
+        cap.setAttribute('aria-hidden', 'true');
+        strip.appendChild(cap);
+      }
+
+      function sdAfterBuildCard(city, isActive, isComingSoon) {
+        var tag = (!isActive && !isComingSoon && city.href) ? 'a' : 'div';
+        var card = document.createElement(tag);
+
+        card.setAttribute('role', 'listitem');
+        card.className = 'fl718-ws-city';
+
+        if (isActive) {
+          card.className += ' fl718-ws-city--active';
+          card.setAttribute('aria-current', 'page');
+        } else if (isComingSoon) {
+          card.className += ' fl718-ws-city--upcoming fl718-ws-city--coming-soon';
+        } else {
+          card.className += ' fl718-ws-city--linked fl718-ws-city--upcoming';
+          card.setAttribute('href', city.href);
+          card.setAttribute('aria-label', city.name + ' photographs');
+          /* data-coords powers the GPS scramble on tap */
+          if (city.coords) {
+            card.setAttribute('data-coords', city.coords);
+          }
+        }
+
+        /* Photo wrap */
+        var wrap = document.createElement('div');
+        wrap.className = 'fl718-ws-city__photo-wrap';
+
+        var img = document.createElement('img');
+        img.className = 'fl718-ws-city__photo';
+        img.src = city.photo;
+        img.alt = city.alt;
+        img.setAttribute('loading', isActive ? 'eager' : 'lazy');
+        img.setAttribute('decoding', 'async');
+        wrap.appendChild(img);
+
+        /* Camera flash overlay — used by Static Burst link-out */
+        var flash = document.createElement('div');
+        flash.className = 'fl718-ws-city__flash';
+        flash.setAttribute('aria-hidden', 'true');
+        wrap.appendChild(flash);
+
+        /* GPS coordinate ping — scramble-reveal on tap, inside photo */
+        var ping = document.createElement('div');
+        ping.className = 'fl718-ws-city__ping';
+        ping.setAttribute('aria-hidden', 'true');
+        wrap.appendChild(ping);
+
+        /* Coming-soon overlay */
+        if (isComingSoon) {
+          var overlay = document.createElement('div');
+          overlay.className = 'fl718-ws-city__overlay';
+          overlay.textContent = 'Coming Soon';
+          wrap.appendChild(overlay);
+        }
+
+        card.appendChild(wrap);
+
+        /* Name */
+        var name = document.createElement('div');
+        name.className = 'fl718-ws-city__name';
+        name.textContent = city.name;
+        card.appendChild(name);
+
+        /* Region */
+        var region = document.createElement('div');
+        region.className = 'fl718-ws-city__region';
+        region.textContent = city.region;
+        card.appendChild(region);
+
+        return card;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+         ANIMATION
+         ═══════════════════════════════════════════════════════════ */
+
+      var sdAfterReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function sdAfterInit() {
+        var section = document.getElementById('fl718IntlAfter');
+        if (!section) return;
+
+        /* Build the strip first, then animate whatever is in it */
+        sdAfterBuildStrip();
+
+        if (sdAfterReducedMotion) return;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        var sdAfterDateline   = document.getElementById('fl718Dateline');
+        var sdAfterRule       = document.getElementById('fl718Rule');
+        var sdAfterEyebrow    = document.getElementById('fl718Eyebrow');
+        var sdAfterCities     = Array.prototype.slice.call(section.querySelectorAll('.fl718-ws-city'));
+        var sdAfterBottomRule = document.getElementById('fl718BottomRule');
+        var sdAfterTaxonomy   = document.getElementById('fl718Taxonomy');
+
+        /* GSAP must own the y state — CSS transform: translateY() is
+           invisible to GSAP's internal cache. Set via gsap.set so the
+           y: 0 tween in Beat 4 actually travels. */
+        if (sdAfterCities.length > 0) {
+          gsap.set(sdAfterCities, { opacity: 0, y: 16 });
+        }
+
+        var tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 82%',
+            once: true
+          }
+        });
+
+        /* Beat 1 — dateline: letter-by-letter reveal, group by group */
+        function sdAfterSplitChars(el) {
+          var text = el.textContent;
+          el.textContent = '';
+          var spans = [];
+          for (var i = 0; i < text.length; i++) {
+            var s = document.createElement('span');
+            s.textContent = text[i] === ' ' ? '\u00a0' : text[i];
+            s.style.display = 'inline-block';
+            s.style.opacity = '0';
+            s.style.transform = 'translateY(6px)';
+            el.appendChild(s);
+            spans.push(s);
+          }
+          return spans;
+        }
+
+        var sdAfterCityEl   = sdAfterDateline.querySelector('.fl718-intl-after__city');
+        var sdAfterCoordsEl = sdAfterDateline.querySelector('.fl718-intl-after__coords');
+        var sdAfterYearEl   = sdAfterDateline.querySelector('.fl718-intl-after__year');
+        var sdAfterSeps     = sdAfterDateline.querySelectorAll('.fl718-intl-after__sep');
+        var sdAfterSep1     = sdAfterSeps[0];
+        var sdAfterSep2     = sdAfterSeps[1];
+
+        /* Make dateline container visible — children start hidden */
+        gsap.set(sdAfterDateline, { opacity: 1, y: 0 });
+
+        /* Hide seps until their group arrives */
+        if (sdAfterSep1) gsap.set(sdAfterSep1, { opacity: 0 });
+        if (sdAfterSep2) gsap.set(sdAfterSep2, { opacity: 0 });
+
+        var sdAfterCityChars  = sdAfterSplitChars(sdAfterCityEl);
+        var sdAfterCoordChars = sdAfterSplitChars(sdAfterCoordsEl);
+        var sdAfterYearChars  = sdAfterSplitChars(sdAfterYearEl);
+
+        var sdAfterCharDefaults = { opacity: 1, y: 0, ease: 'power2.out', duration: 0.03 };
+
+        /* City name types out */
+        tl.to(sdAfterCityChars, Object.assign({}, sdAfterCharDefaults, { stagger: 0.045 }), 0);
+
+        /* Sep 1 appears */
+        tl.to(sdAfterSep1, { opacity: 1, duration: 0.2 }, '-=0.1');
+
+        /* Coords type out */
+        tl.to(sdAfterCoordChars, Object.assign({}, sdAfterCharDefaults, { stagger: 0.032 }), '-=0.05');
+
+        /* Sep 2 appears */
+        tl.to(sdAfterSep2, { opacity: 1, duration: 0.2 }, '-=0.1');
+
+        /* Year types out */
+        tl.to(sdAfterYearChars, Object.assign({}, sdAfterCharDefaults, { stagger: 0.06 }), '-=0.05');
+
+        /* Beat 2 — rule draws left to right */
+        tl.to(sdAfterRule, { scaleX: 1, duration: 0.65, ease: 'power2.inOut' }, '-=0.1');
+
+        /* Beat 3 — eyebrow */
+        tl.to(sdAfterEyebrow, { opacity: 1, duration: 0.45, ease: 'power1.out' }, 1.0);
+
+        /* Beat 4 — cities stagger up */
+        tl.to(sdAfterCities, { opacity: 1, y: 0, duration: 0.55, stagger: 0.09, ease: 'power2.out' }, 1.15);
+
+        /* Beat 5 — bottom rule fades, then taxonomy terms type out word by word */
+        tl.to(sdAfterBottomRule, { opacity: 1, duration: 0.4, ease: 'power1.out' }, 1.75);
+
+        /* Make taxonomy container visible; seps start hidden */
+        gsap.set(sdAfterTaxonomy, { opacity: 1 });
+        var sdAfterTaxLinks = Array.prototype.slice.call(sdAfterTaxonomy.querySelectorAll('.fl718-intl-after__tax-link'));
+        var sdAfterTaxSeps  = Array.prototype.slice.call(sdAfterTaxonomy.querySelectorAll('.fl718-intl-after__tax-sep'));
+        sdAfterTaxSeps.forEach(function(s) { gsap.set(s, { opacity: 0 }); });
+
+        /* Split each term and stagger chars across all terms sequentially */
+        var sdAfterTaxOffset = 1.9;
+        sdAfterTaxLinks.forEach(function(link, i) {
+          var chars = sdAfterSplitChars(link);
+          tl.to(chars, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.025, stagger: 0.04 }, sdAfterTaxOffset);
+          sdAfterTaxOffset += chars.length * 0.04 + 0.02;
+          /* Sep appears after each term except the last */
+          if (sdAfterTaxSeps[i]) {
+            tl.to(sdAfterTaxSeps[i], { opacity: 1, duration: 0.15 }, sdAfterTaxOffset);
+            sdAfterTaxOffset += 0.1;
+          }
+        });
+
+        /* Refresh after all tweens are built — grid images above may
+           shift layout after lazy-load, affecting trigger positions. */
+        ScrollTrigger.refresh();
+
+        /* ── DEPTH-OF-FIELD SCROLL EFFECT ─────────────────────────
+           Cards nearest the strip center are brightest/most saturated.
+           Edge cards recede. Recalculated live on horizontal scroll.
+        ──────────────────────────────────────────────────────────── */
+        var sdAfterStrip    = document.getElementById('fl718Strip');
+        var sdAfterWipeBar  = document.getElementById('sdWipeBar'); /* cached once */
+        var sdAfterDOFCards = Array.prototype.slice.call(
+          section.querySelectorAll('.fl718-ws-city--linked')
+        );
+
+        var DOF_CENTER_OP  = 0.95;
+        var DOF_EDGE_OP    = 0.52;
+        var DOF_CENTER_SAT = 0.9;
+        var DOF_EDGE_SAT   = 0.28;
+        var DOF_CENTER_TXT = 1.0;
+        var DOF_EDGE_TXT   = 0.55;
+
+        function sdAfterLerp(a, b, t) { return a + (b - a) * t; }
+
+        /* Cache per-card DOM references and set initial DOF state */
+        if (sdAfterDOFCards.length > 0) {
+          sdAfterDOFCards.forEach(function(card) {
+            card._sdPhoto  = card.querySelector('.fl718-ws-city__photo');
+            card._sdNameEl = card.querySelector('.fl718-ws-city__name');
+            card._sdFlash  = card.querySelector('.fl718-ws-city__flash');
+            card._sdPing   = card.querySelector('.fl718-ws-city__ping');
+            gsap.set(card._sdPhoto,  { opacity: DOF_EDGE_OP,  filter: 'saturate(' + DOF_EDGE_SAT + ')' });
+            gsap.set(card._sdNameEl, { opacity: DOF_EDGE_TXT });
+          });
+        }
+
+        function sdAfterUpdateDOF() {
+          if (!sdAfterStrip || sdAfterDOFCards.length === 0) return;
+          var stripRect   = sdAfterStrip.getBoundingClientRect();
+          /* Focus on the snapped card's center, not the strip's visual midpoint.
+             The snapped card's left edge sits at (stripRect.left + 24px padding),
+             so its center is always at stripRect.left + 24 + 77 (half of 155px). */
+          var stripCenter = stripRect.left + 24 + 77;
+
+          sdAfterDOFCards.forEach(function(card) {
+            var cardRect   = card.getBoundingClientRect();
+            var cardCenter = cardRect.left + cardRect.width * 0.5;
+            var dist       = Math.abs(cardCenter - stripCenter);
+            var norm       = Math.min(dist / (cardRect.width * 1.2), 1);
+
+            var targetOp  = sdAfterLerp(DOF_CENTER_OP,  DOF_EDGE_OP,  norm);
+            var targetSat = sdAfterLerp(DOF_CENTER_SAT, DOF_EDGE_SAT, norm);
+            var targetTxt = sdAfterLerp(DOF_CENTER_TXT, DOF_EDGE_TXT, norm);
+
+            /* Use cached references — no querySelector per frame */
+            gsap.to(card._sdPhoto, {
+              opacity: targetOp,
+              filter: 'saturate(' + targetSat.toFixed(3) + ')',
+              duration: 0.25,
+              ease: 'power1.out',
+              overwrite: 'auto'
+            });
+            gsap.to(card._sdNameEl, {
+              opacity: targetTxt,
+              duration: 0.25,
+              ease: 'power1.out',
+              overwrite: 'auto'
+            });
+          });
+        }
+
+        /* Run once on load to seed center-card state, then listen for strip scroll */
+        sdAfterUpdateDOF();
+
+        var sdAfterDOFPending = false;
+        if (sdAfterStrip) {
+          sdAfterStrip.addEventListener('scroll', function() {
+            if (!sdAfterDOFPending) {
+              sdAfterDOFPending = true;
+              requestAnimationFrame(function() {
+                sdAfterUpdateDOF();
+                sdAfterDOFPending = false;
+              });
+            }
+          }, { passive: true });
+        }
+
+        /* ── SCRAMBLE TAP + STATIC BURST LINK-OUT ─────────────────
+           Tap a linked city card:
+             1. GPS coordinates scramble-resolve over the photo
+             2. 600ms hold
+             3. Coords chars explode outward (Static Burst)
+                — burst chars are z-index 200; wipe bar is z-index 9999.
+                  Chars are intentionally overtaken by the wipe as it sweeps,
+                  creating a "signal swallowed by darkness" effect.
+             4. Camera flash on the photo
+             5. Dark wipe bar sweeps left→right across viewport
+             6. Navigate to city page (or reset for placeholder #hrefs)
+           prefers-reduced-motion: navigate immediately, no animation.
+        ──────────────────────────────────────────────────────────── */
+        var SCRAMBLE_CHARS     = '0123456789ABCDEF°′″NSEW+-.·×∑Δ≈§';
+        var TAP_THRESHOLD      = 8;    /* px — distinguishes tap from scroll gesture */
+        var sdAfterCurrentScramble = null; /* IIFE-scoped handle, cancellable */
+        var sdAfterBurstTl     = null; /* IIFE-scoped burst timeline, killable */
+
+        function sdAfterRandChar() {
+          return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+        }
+
+        /* Scramble text into finalText, resolving left-to-right.
+           Returns { stop } so the caller can cancel mid-flight.
+           Note: resolveId is overwritten on each recursive call. The
+           stopped flag guard in resolveNext safely handles any late-firing
+           timers after stop() is called. */
+        function sdAfterScramble(el, finalText, onComplete) {
+          var chars      = finalText.split('');
+          var resolved   = [];
+          var resolveIdx = 0;
+          var intervalId, resolveId;
+          var stopped    = false;
+
+          function updateDisplay() {
+            var out = '';
+            for (var i = 0; i < chars.length; i++) {
+              if (i < resolveIdx) {
+                out += resolved[i];
+              } else {
+                out += (chars[i] === ' ' || chars[i] === '′' || chars[i] === '°')
+                  ? chars[i] : sdAfterRandChar();
+              }
+            }
+            el.textContent = out;
+          }
+
+          function resolveNext() {
+            if (stopped) return;
+            if (resolveIdx < chars.length) {
+              resolved[resolveIdx] = chars[resolveIdx];
+              resolveIdx++;
+              resolveId = setTimeout(resolveNext, 80);
+            } else {
+              clearInterval(intervalId);
+              el.textContent = finalText;
+              if (onComplete) onComplete();
+            }
+          }
+
+          intervalId = setInterval(updateDisplay, 40);
+          resolveId  = setTimeout(resolveNext, 120);
+
+          return {
+            stop: function() {
+              stopped = true;
+              clearInterval(intervalId);
+              clearTimeout(resolveId);
+            }
+          };
+        }
+
+        /* Reset a card fully after burst completes without navigation
+           (placeholder #href case — allows re-tap). */
+        function sdAfterResetCard(card) {
+          card._sdActive = false;
+          gsap.set(card._sdPing,  { opacity: 0 });
+          gsap.set(card._sdFlash, { opacity: 0 });
+          card._sdPing.textContent = '';
+          if (sdAfterWipeBar) {
+            gsap.set(sdAfterWipeBar, { x: '-100%', pointerEvents: 'none' });
+          }
+        }
+
+        /* Static Burst link-out animation.
+           Uses IIFE-scoped sdAfterBurstTl so it can be killed externally. */
+        function sdAfterStaticBurst(card, coordsText, href) {
+          var ping     = card._sdPing;
+          var flash    = card._sdFlash;
+          var pingRect = ping.getBoundingClientRect();
+          var burstEls = [];
+
+          /* Spawn fixed-position char spans at ping location.
+             position:fixed + getBoundingClientRect coords escape all
+             overflow clipping from scroll containers. */
+          coordsText.split('').forEach(function(ch, i) {
+            var span = document.createElement('div');
+            span.className     = 'fl718-sd-burst-char';
+            span.textContent   = ch;
+            span.style.left    = (pingRect.left + i * 6.2) + 'px';
+            span.style.top     = pingRect.top + 'px';
+            span.style.opacity = '0';
+            document.body.appendChild(span);
+            burstEls.push(span);
+          });
+
+          if (sdAfterBurstTl) sdAfterBurstTl.kill();
+
+          sdAfterBurstTl = gsap.timeline({
+            onComplete: function() {
+              burstEls.forEach(function(s) {
+                if (s.parentNode) s.parentNode.removeChild(s);
+              });
+              if (href && href !== '#') {
+                window.location.href = href;
+              } else {
+                /* Placeholder href — reset so card can be tapped again */
+                sdAfterResetCard(card);
+              }
+            }
+          });
+
+          /* 1. Chars appear then explode outward (0.5s).
+                Wipe bar overtakes them intentionally at t=0.18 —
+                chars are "swallowed by darkness" as the gate closes. */
+          sdAfterBurstTl.set(burstEls, { opacity: 1 }, 0);
+          burstEls.forEach(function(span, i) {
+            var sx = (Math.random() > 0.5 ? 1 : -1) * (40 + Math.random() * 45);
+            var sy = (Math.random() > 0.5 ? 1 : -1) * (20 + Math.random() * 45);
+            sdAfterBurstTl.to(span, {
+              x: sx, y: sy, opacity: 0,
+              duration: 0.5, ease: 'power2.in', delay: i * 0.018
+            }, 0);
+          });
+
+          /* 2. Camera flash */
+          sdAfterBurstTl.set(flash, { opacity: 0.92 }, 0.04);
+          sdAfterBurstTl.to(flash, { opacity: 0, duration: 0.14, ease: 'power2.out' }, 0.04);
+
+          /* 3. Wipe bar sweeps left→right */
+          sdAfterBurstTl.set(sdAfterWipeBar, { x: '-100%', pointerEvents: 'all' }, 0.05);
+          sdAfterBurstTl.to(sdAfterWipeBar, { x: '0%', duration: 0.4, ease: 'power2.inOut' }, 0.18);
+        }
+
+        /* Attach tap listeners to all linked city cards */
+        sdAfterDOFCards.forEach(function(card) {
+          card._sdActive = false;
+          var tapX = 0, tapY = 0;
+
+          card.addEventListener('touchstart', function(e) {
+            tapX = e.touches[0].clientX;
+            tapY = e.touches[0].clientY;
+          }, { passive: true });
+
+          card.addEventListener('touchend', function(e) {
+            if (card._sdActive) return;
+            var dx = Math.abs(e.changedTouches[0].clientX - tapX);
+            var dy = Math.abs(e.changedTouches[0].clientY - tapY);
+            if (dx > TAP_THRESHOLD || dy > TAP_THRESHOLD) return;
+            e.preventDefault();
+            sdAfterHandleTap(card);
+          }, { passive: false });
+
+          /* Desktop mouse fallback */
+          card.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (card._sdActive) return;
+            sdAfterHandleTap(card);
+          });
+        });
+
+        function sdAfterHandleTap(card) {
+          card._sdActive = true;
+
+          var coords = card.getAttribute('data-coords') || '';
+          var href   = card.getAttribute('href') || '#';
+          var ping   = card._sdPing;
+
+          if (sdAfterReducedMotion) {
+            if (href && href !== '#') window.location.href = href;
+            card._sdActive = false;
+            return;
+          }
+
+          /* Stop any in-flight scramble from a previous tap */
+          if (sdAfterCurrentScramble) {
+            sdAfterCurrentScramble.stop();
+            sdAfterCurrentScramble = null;
+          }
+
+          gsap.set(ping, { opacity: 1 });
+          ping.textContent = '';
+
+          sdAfterCurrentScramble = sdAfterScramble(ping, coords, function() {
+            sdAfterCurrentScramble = null;
+            /* Coords locked — hold 600ms then fade and fire burst */
+            setTimeout(function() {
+              gsap.to(ping, {
+                opacity: 0,
+                duration: 0.35,
+                ease: 'power1.in',
+                onComplete: function() {
+                  sdAfterStaticBurst(card, coords, href);
+                }
+              });
+            }, 600);
+          });
+        }
+      }
+
+      if (document.readyState === 'complete') {
+        sdAfterInit();
+      } else {
+        window.addEventListener('load', sdAfterInit);
+      }
+
+    })();
+  </script>
+
+
+  <!-- ============================================================
+       THREE-ACT COORDINATION (MOBILE)
+       Shared state between hero IIFE and grid IIFE. On mobile
+       (1-column layout), the first grid items may be within the
+       viewport during the hero animation. The grid waits for the
+       hero to complete before revealing in-viewport items.
+       Failsafe: if hero never completes (image decode failure),
+       release the grid after 4.5s so content is never locked.
+  ============================================================ -->
+  <script>
+    var sdHeroComplete = false;
+    var sdPendingGridReveal = null;
+
+    setTimeout(function() {
+      if (!sdHeroComplete) {
+        sdHeroComplete = true;
+        if (sdPendingGridReveal) sdPendingGridReveal();
+      }
+    }, 4500);
+  </script>
+
+
+  <!-- ============================================================
+       MAIN SCRIPT — Hero + Grid + Lightbox
+       Single IIFE at bottom of <body>.
+       Uses var (not let/const) — safe for WordPress inline injection.
+       Scoped reduced-motion variable: sdReducedMotion.
+
+       ARCHITECTURE:
+         1. Hero entrance — "Two Planes": two clipped image halves
+            slide in from opposite sides, sealing at the window frame.
+            Decode guard (Promise.all) prevents black-flash on GPU layers.
+         2. Grid image reveal — per-item IntersectionObserver,
+            opacity fade placeholder. GRID ENTRANCE ANIMATION TBD.
+         3. Lightbox — White Room → Dark fade. Open/close via
+            opacity tween. No film badge (all digital).
+  ============================================================ -->
+  <script>
+    (function() {
+      'use strict';
+
+      var sdReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var sdHoverCapable  = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      document.body.classList.add('fl718-js-loaded');
+
+      // ----------------------------------------------------------
+      // HERO ENTRANCE
+      //
+      // HERO ENTRANCE — "Two Planes" (see comment block above for full description)
+      //
+      // This photograph: dim interior foreground + curtains +
+      // framed beach painting (the tourist fantasy) + through the
+      // window: the city, clouds, sun breaking through.
+      // The interior-to-exterior threshold is the whole argument.
+      //
+      // PLACEHOLDER: simple opacity fade-in over 1.4s.
+      //   Phase 1 (0.0s – 1.4s): image fades in
+      //   Phase 2 (1.2s – 1.8s): gradient fades in for text legibility
+      //   Phase 3 (1.5s – 2.1s): title materializes
+      //   Phase 4 (2.0s – 2.4s): subtitle whispers in
+      //
+      // Replace this block entirely when the final technique is built.
+      // Keep the initSdHero pattern (image.complete check + load event).
+      // ----------------------------------------------------------
+
+      // Hoist all hero element references above the if/else — avoids duplicate var declarations
+      var sdHeroImgLeft    = document.getElementById('sdHeroImgLeft');
+      var sdHeroImgRight   = document.getElementById('sdHeroImgRight');
+      var sdHeroSeam       = document.getElementById('sdHeroSeam');
+      var sdHeroTitleBlock = document.getElementById('sdHeroTitleBlock');
+      var sdHeroEyebrow    = document.getElementById('sdHeroEyebrow');
+      var sdHeroCity       = document.getElementById('sdHeroCity');
+      var sdHeroSub        = document.getElementById('sdHeroSub');
+
+      if (!sdReducedMotion) {
+
+        // ----------------------------------------------------------
+        // HERO ENTRANCE — "Two Planes" + Colonial Weight typography
+        //
+        // Two copies of the same photograph, each clipped to one half.
+        // Left: interior world (room, painting, curtains) — enters from left.
+        // Right: exterior world (window, city, Caribbean light) — enters from right.
+        // Interior has a 0.3s head start — the fantasy always arrives first.
+        // A 1px seam marks the threshold at 50%, then dissolves.
+        // Title block gradient fades in at 2.5s, just before typography sequence:
+        //   Eyebrow (2.8s) → City rise from y:14 (3.1s) → Sub whisper (3.7s)
+        //
+        // Decode guard: Promise.all([imgLeft.decode(), imgRight.decode()])
+        // prevents the black-flash that occurs when the browser composites
+        // a GPU layer mid-animation before the image is fully decoded.
+        // ----------------------------------------------------------
+
+        if (sdHeroImgLeft && sdHeroImgRight && sdHeroSeam && sdHeroTitleBlock && sdHeroEyebrow && sdHeroCity && sdHeroSub) {
+
+          gsap.set(sdHeroImgLeft,  { opacity: 0, x: -110 });
+          gsap.set(sdHeroImgRight, { opacity: 0, x:  110 });
+          gsap.set(sdHeroSeam,     { opacity: 0 });
+          /* sdHeroTitleBlock, sdHeroEyebrow, sdHeroCity, sdHeroSub start at opacity:0 via CSS */
+
+          Promise.all([
+            sdHeroImgLeft.decode  ? sdHeroImgLeft.decode()  : Promise.resolve(),
+            sdHeroImgRight.decode ? sdHeroImgRight.decode() : Promise.resolve()
+          ]).catch(function () {}).then(function () {
+
+            /* Force a synchronous layout flush before GSAP starts.
+               Reading offsetWidth causes the browser to composite both
+               images into the document before any animation begins —
+               preventing the black GPU layer that appears when a layer
+               is promoted before its image data is ready. */
+            void sdHeroImgLeft.offsetWidth;
+            void sdHeroImgRight.offsetWidth;
+
+            var tl = gsap.timeline({
+              delay: 0.2,
+              onComplete: function() {
+                sdHeroComplete = true;
+                if (sdPendingGridReveal) sdPendingGridReveal();
+              }
+            });
+
+            /* Phase 1 — Interior arrives first (0s → 2.0s)
+               The fantasy has a slight head start. The room, the painting —
+               the version of the place prepared for you. */
+            tl.to(sdHeroImgLeft, {
+              duration: 2.0,
+              x: 0,
+              opacity: 1,
+              ease: 'power2.out'
+            }, 0)
+
+            /* Phase 2 — Exterior arrives, slightly behind (0.3s → 2.3s)
+               Reality is a beat late. It always is. */
+            .to(sdHeroImgRight, {
+              duration: 2.0,
+              x: 0,
+              opacity: 1,
+              ease: 'power2.out'
+            }, 0.3)
+
+            /* Phase 3 — Seam appears at the threshold (0.9s → 1.4s)
+               The window frame made abstract — the threshold between worlds. */
+            .to(sdHeroSeam, {
+              duration: 0.5,
+              opacity: 1,
+              ease: 'power1.out'
+            }, 0.9)
+
+            /* Phase 4 — Seam dissolves (2.1s → 3.0s)
+               The photograph is one. The seam burns off. */
+            .to(sdHeroSeam, {
+              duration: 0.9,
+              opacity: 0,
+              ease: 'power2.in'
+            }, 2.1)
+
+            /* Phase 5a — Gradient lift fades in (2.5s → 3.0s)
+               Prepares the reading field before text arrives.
+               The assembled photograph reads clean before the gradient builds. */
+            .to(sdHeroTitleBlock, {
+              duration: 0.5,
+              opacity: 1,
+              ease: 'power1.out'
+            }, 2.5)
+
+            /* Phase 5b — Eyebrow fades first (2.8s → 3.4s)
+               The country, quietly stating itself. */
+            .to(sdHeroEyebrow, {
+              duration: 0.6,
+              opacity: 1,
+              ease: 'power1.out'
+            }, 2.8)
+
+            /* Phase 5c — City title rises from y:14 (3.1s → 4.0s)
+               Materializes from the gradient, not stamped on.
+               Playfair 900 italic: the stones arrive complete. */
+            .fromTo(sdHeroCity,
+              { opacity: 0, y: 14 },
+              { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' },
+              3.1
+            )
+
+            /* Phase 5d — Sub whispers in last (3.7s → 4.5s)
+               Lora italic, barely audible. */
+            .to(sdHeroSub, {
+              duration: 0.8,
+              opacity: 1,
+              ease: 'power1.out'
+            }, 3.7)
+
+
+          }); // end Promise.all decode
+
+        }
+
+      } else {
+        /* Reduced motion: show both halves and all text immediately */
+        if (sdHeroImgLeft)    { gsap.set(sdHeroImgLeft,    { opacity: 1, x: 0 }); }
+        if (sdHeroImgRight)   { gsap.set(sdHeroImgRight,   { opacity: 1, x: 0 }); }
+        if (sdHeroTitleBlock) { gsap.set(sdHeroTitleBlock, { opacity: 1 }); }
+        if (sdHeroEyebrow)    { gsap.set(sdHeroEyebrow,    { opacity: 1 }); }
+        if (sdHeroCity)       { gsap.set(sdHeroCity,       { opacity: 1, y: 0 }); }
+        if (sdHeroSub)        { gsap.set(sdHeroSub,        { opacity: 1 }); }
+        /* Signal hero complete immediately for three-act coordination */
+        sdHeroComplete = true;
+        if (sdPendingGridReveal) sdPendingGridReveal();
+      }
+
+
+      // ----------------------------------------------------------
+      // GRID IMAGE REVEAL — "The Rain Curtain"
+      //
+      // clip-path: inset(0 0 100% 0) → inset(0 0 0% 0)
+      // Top-down wipe — sky clears first, then the street appears below.
+      // The direction of tropical rain stopping.
+      //
+      // Simultaneous: filter: blur(2px) → blur(0) dissipates as
+      // the curtain lifts. Two separate gsap.to() calls avoid
+      // property-conflict compositing issues with clip-path.
+      //
+      // Duration: 1.4s. Ease: power2.out — wipe accelerates
+      // as the rain clears, then settles.
+      //
+      // Per-item IntersectionObserver with closure-scoped triggered
+      // boolean. threshold: 0.08 (mobile) — fires early so wipe reads as
+      // arriving from just offscreen, not jumping in mid-view.
+      // One-shot: unobserve + triggered guard prevents re-fire on
+      // scroll back. Image-load guard: observe only after layout settled.
+      // ----------------------------------------------------------
+
+      if (!sdReducedMotion) {
+        var sdGridItems = document.querySelectorAll('.fl718-sd-item');
+        var sdGridItemsArr = Array.prototype.slice.call(sdGridItems);
+
+        if (sdGridItemsArr.length > 0) {
+
+          function sdRevealRainCurtain(img) {
+            // Clip-path wipe: top-down clear (sky first, then street).
+            // Starting state set in CSS: inset(0 0 100% 0).
+            // filter: blur(2px) → blur(0) dissipates concurrent with the wipe.
+            // clipPath and filter are distinct CSS properties — safe in one tween.
+            gsap.to(img, {
+              clipPath: 'inset(0 0 0% 0)',
+              filter: 'blur(0px)',
+              duration: 1.4,
+              ease: 'power2.out'
+            });
+          }
+
+          // ── THREE-ACT COORDINATION (MOBILE) ──────────────────────
+          // On mobile (1-column), the first grid items may be within the
+          // viewport during the hero animation. We split items into two
+          // groups: in-viewport items (revealed immediately when hero
+          // completes) and below-fold items (registered with IO after).
+          // This prevents the Rain Curtain from firing during the hero
+          // animation, which would compete visually and lose impact.
+          // ----------------------------------------------------------
+
+          var sdImageObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              // Height guard: prevent 0-height collapsed items from triggering
+              if (entry.isIntersecting && entry.boundingClientRect.height >= 10) {
+                sdImageObserver.unobserve(entry.target);
+                var img = entry.target.querySelector('img');
+                if (img) sdRevealRainCurtain(img);
+              }
+            });
+          }, { threshold: 0.08 });
+
+          function sdRevealGrid() {
+            var vph = window.innerHeight;
+            var inView = [];
+            var belowFold = [];
+
+            sdGridItemsArr.forEach(function(item) {
+              var rect = item.getBoundingClientRect();
+              if (rect.height >= 10 && rect.top < vph) {
+                inView.push(item);
+              } else {
+                belowFold.push(item);
+              }
+            });
+
+            // Reveal in-viewport items immediately with stagger
+            inView.forEach(function(item, i) {
+              var img = item.querySelector('img');
+              if (img) {
+                gsap.delayedCall(i * 0.12, function() {
+                  sdRevealRainCurtain(img);
+                });
+              }
+            });
+
+            // Register below-fold items with observer after one rAF
+            requestAnimationFrame(function() {
+              belowFold.forEach(function(item) {
+                sdImageObserver.observe(item);
+              });
+            });
+          }
+
+          // Wire up the three-act handoff
+          sdPendingGridReveal = sdRevealGrid;
+
+          // If hero already finished (reduced motion snapped it, or
+          // failsafe fired before this code ran), fire immediately
+          if (sdHeroComplete) sdRevealGrid();
+
+        }
+
+      } else {
+        /* Reduced motion: CSS handles this via @media — clip-path: none,
+           filter: none already applied. No JS needed. */
+      }
+
+
+      // ----------------------------------------------------------
+      // HOVER EFFECT — "The Window Frame"
+      //
+      // The radial vignette gradient is baked into CSS on .fl718-sd-item__veil.
+      // GSAP tweens opacity only — the gradient shape doesn't change.
+      //
+      // On enter: opacity 0 → 1, 0.5s, power2.out. The frame closes in.
+      // On leave: opacity 1 → 0, 0.65s, power2.inOut. Steps back gently.
+      //
+      // Touch guard: sdHoverCapable prevents hover firing on tap devices.
+      // killTweensOf on each event prevents interrupted tween conflicts.
+      // ----------------------------------------------------------
+
+      if (!sdReducedMotion && sdHoverCapable) {
+        var sdHoverItems = Array.prototype.slice.call(document.querySelectorAll('.fl718-sd-item'));
+        sdHoverItems.forEach(function(item) {
+          var veil = item.querySelector('.fl718-sd-item__veil');
+          if (!veil) return;
+
+          item.addEventListener('mouseenter', function() {
+            gsap.killTweensOf(veil);
+            gsap.to(veil, {
+              opacity: 1,
+              duration: 0.5,
+              ease: 'power2.out'
+            });
+          });
+
+          item.addEventListener('mouseleave', function() {
+            gsap.killTweensOf(veil);
+            gsap.to(veil, {
+              opacity: 0,
+              duration: 0.65,
+              ease: 'power2.inOut'
+            });
+          });
+        });
+      }
+
+
+      // ----------------------------------------------------------
+      // LIGHTBOX — "The Glass Pane"
+      //
+      // The lightbox is the page's interior/exterior threshold played
+      // back at the micro scale. When you click a photograph to view it
+      // full-screen, you are looking through another window.
+      //
+      // OPEN (~1.45s):
+      //   1. Nine horizontal venetian strips seal downward, top→bottom,
+      //      scaleY 0→1 from transform-origin: top center. Stagger 0.04s,
+      //      duration 0.22s per strip, ease power2.inOut. The warm dark
+      //      field materializes strip by strip — rain shutters closing.
+      //   2. Photograph slides in from the right (x: +80 → 0, opacity
+      //      0 → 1, 0.5s, power2.out) — print being placed in a frame.
+      //   3. UI fades in last (0.25s).
+      //
+      // CLOSE (reverse gravity):
+      //   1. UI fades out (0.2s).
+      //   2. Photo slides right (x: 0 → +80, opacity 1 → 0, 0.4s, power2.in).
+      //   3. Strips peel open bottom→top (transform-origin: bottom center,
+      //      scaleY 1 → 0, stagger from 'end'). Light returns the same way
+      //      it left.
+      //
+      // NAV (prev/next): current photo exits one direction, new photo
+      // enters from the opposite side. UI dims to 0.4 during the swap.
+      //
+      // SAFARI: no clip-path + GSAP filter on the photo. Strips use
+      // scaleY only; photo wrap uses x + opacity only.
+      // ----------------------------------------------------------
+
+      var sdLbPhotos        = Array.prototype.slice.call(document.querySelectorAll('.fl718-sd-item'));
+      var sdLbRootEl        = document.getElementById('sdLbRoot');
+      var sdLbDarkEl        = document.getElementById('sdLbDark');
+      var sdLbStageEl       = document.getElementById('sdLbStage');
+      var sdLbUiEl          = document.getElementById('sdLbUi');
+      var sdLbImageWrapEl   = document.getElementById('sdLbImageWrap');
+      var sdLbImageEl       = document.getElementById('sdLbImage');
+      var sdLbCounterEl     = document.getElementById('sdLbCounter');
+      var sdLbCloseEl       = document.getElementById('sdLbClose');
+      var sdLbPrevEl        = document.getElementById('sdLbPrev');
+      var sdLbNextEl        = document.getElementById('sdLbNext');
+      var sdLbBackdropEl    = document.getElementById('sdLbBackdrop');
+
+      // Glass Pane configuration
+      var SD_LB_STRIP_COUNT    = 9;
+      var SD_LB_STRIP_DURATION = 0.22;   // per strip
+      var SD_LB_STRIP_STAGGER  = 0.04;   // between strips
+      var SD_LB_STRIP_COLOR    = 'rgba(14, 10, 6, 0.97)';
+      var SD_LB_PHOTO_X_OFFSET = 80;     // px slide distance
+      var SD_LB_PHOTO_IN_DUR   = 0.50;
+      var SD_LB_PHOTO_OUT_DUR  = 0.40;
+      var SD_LB_PHOTO_NAV_OUT  = 0.30;
+      var SD_LB_PHOTO_NAV_IN   = 0.35;
+      var SD_LB_UI_IN_DUR      = 0.25;
+      var SD_LB_UI_OUT_DUR     = 0.20;
+
+      var sdLbStrips = [];
+
+      if (sdLbRootEl && sdLbDarkEl && sdLbStageEl && sdLbUiEl && sdLbImageWrapEl && sdLbImageEl) {
+
+        // ── Build venetian strips inside the dark layer ─────────
+        // Each strip is a horizontal band positioned by inline top/height.
+        // Color is set inline so the strip color stays in sync with the
+        // SD_LB_STRIP_COLOR constant above (and the CSS background is the
+        // same value as a no-JS safety net).
+        (function sdLbBuildStrips() {
+          var stepPct = 100 / SD_LB_STRIP_COUNT;
+          for (var i = 0; i < SD_LB_STRIP_COUNT; i++) {
+            var s = document.createElement('div');
+            s.className = 'fl718-sd-lb-strip';
+            s.setAttribute('aria-hidden', 'true');
+            s.style.height = stepPct.toFixed(4) + '%';
+            s.style.top    = (i * stepPct).toFixed(4) + '%';
+            s.style.background = SD_LB_STRIP_COLOR;
+            sdLbDarkEl.appendChild(s);
+            sdLbStrips.push(s);
+          }
+        })();
+
+        // Initial state — wrap and dark hidden
+        gsap.set(sdLbImageWrapEl, { opacity: 0, x: 0 });
+        gsap.set(sdLbDarkEl, { opacity: 0 });
+
+
+        var sdLbIsOpen      = false;
+        var sdLbIsAnimating = false;
+        var sdLbCurrentIdx  = 0;
+        var sdLbTotal       = sdLbPhotos.length;
+        var sdLbLastFocus   = null;
+        var sdLbTouchStart  = null;
+        var sdLbScrollY     = 0; // iOS scroll lock: records scroll position
+
+        function sdLbGetData(idx) {
+          var fig = sdLbPhotos[idx];
+          var img = fig.querySelector('img');
+          return {
+            src: img ? (img.getAttribute('src') || '') : '',
+            alt: img ? (img.getAttribute('alt') || '') : ''
+          };
+        }
+
+        function sdLbUpdateUi(idx) {
+          if (sdLbCounterEl) sdLbCounterEl.textContent = (idx + 1) + ' / ' + sdLbTotal;
+        }
+
+        function sdLbMakeReachable(yes) {
+          var t = yes ? '0' : '-1';
+          if (sdLbCloseEl) sdLbCloseEl.setAttribute('tabindex', t);
+          if (sdLbPrevEl)  sdLbPrevEl.setAttribute('tabindex', t);
+          if (sdLbNextEl)  sdLbNextEl.setAttribute('tabindex', t);
+        }
+
+        // OPEN — Glass Pane sequence
+        function sdLbOpenLb(fig) {
+          if (sdLbIsOpen || sdLbIsAnimating) return;
+          sdLbIsAnimating = true;
+          sdLbLastFocus   = fig;
+          sdLbCurrentIdx  = parseInt(fig.getAttribute('data-index'), 10);
+
+          var data = sdLbGetData(sdLbCurrentIdx);
+          sdLbImageEl.src = data.src;
+          sdLbImageEl.alt = data.alt;
+          sdLbUpdateUi(sdLbCurrentIdx);
+
+          sdLbDarkEl.classList.add('fl718-sd-lb-dark--active');
+          sdLbStageEl.classList.add('fl718-sd-lb-stage--active');
+          sdLbUiEl.classList.add('fl718-sd-lb-ui--active');
+          sdLbRootEl.removeAttribute('aria-hidden');
+          sdLbMakeReachable(true);
+          // iOS Safari scroll lock — position:fixed pattern.
+          // overflow:hidden is silently ignored by iOS Safari.
+          sdLbScrollY = window.scrollY;
+          document.body.style.position = 'fixed';
+          document.body.style.top = '-' + sdLbScrollY + 'px';
+          document.body.style.width = '100%';
+
+          if (sdReducedMotion) {
+            // Snap straight to the open state — strips solid, photo placed, UI on.
+            gsap.set(sdLbStrips, { scaleY: 1 });
+            gsap.set(sdLbDarkEl, { opacity: 1 });
+            gsap.set(sdLbImageWrapEl, { opacity: 1, x: 0 });
+            gsap.set(sdLbUiEl, { opacity: 1 });
+            sdLbIsOpen = true;
+            sdLbIsAnimating = false;
+            if (sdLbCloseEl) sdLbCloseEl.focus();
+            return;
+          }
+
+          // Reset state for the open sequence
+          gsap.set(sdLbStrips, { scaleY: 0, transformOrigin: 'top center' });
+          gsap.set(sdLbDarkEl, { opacity: 1 });   // dark layer is the strip stage; visible
+          gsap.set(sdLbImageWrapEl, { opacity: 0, x: SD_LB_PHOTO_X_OFFSET });
+          gsap.set(sdLbUiEl, { opacity: 0 });
+
+          var tl = gsap.timeline({
+            onComplete: function() {
+              sdLbIsOpen = true;
+              sdLbIsAnimating = false;
+              if (sdLbCloseEl) sdLbCloseEl.focus();
+            }
+          });
+
+          // Phase 1 — Strips seal downward (rain shutters closing)
+          tl.to(sdLbStrips, {
+            scaleY: 1,
+            duration: SD_LB_STRIP_DURATION,
+            ease: 'power2.inOut',
+            stagger: { each: SD_LB_STRIP_STAGGER, from: 'start' }
+          }, 0);
+
+          // Phase 2 — Photograph slides in from the right (placed in the frame)
+          tl.to(sdLbImageWrapEl, {
+            x: 0,
+            opacity: 1,
+            duration: SD_LB_PHOTO_IN_DUR,
+            ease: 'power2.out'
+          }, '>');
+
+          // Phase 3 — UI fades in last
+          tl.to(sdLbUiEl, {
+            opacity: 1,
+            duration: SD_LB_UI_IN_DUR,
+            ease: 'power1.out'
+          }, '>');
+        }
+
+        // CLOSE — Glass Pane reverse
+        function sdLbCloseLb() {
+          if (!sdLbIsOpen || sdLbIsAnimating) return;
+          sdLbIsAnimating = true;
+          sdLbIsOpen = false;
+          sdLbMakeReachable(false);
+
+          if (sdReducedMotion) {
+            // Snap to closed
+            gsap.set(sdLbStrips, { scaleY: 0 });
+            gsap.set(sdLbDarkEl, { opacity: 0 });
+            gsap.set(sdLbImageWrapEl, { opacity: 0, x: 0 });
+            gsap.set(sdLbUiEl, { opacity: 0 });
+            sdLbReset();
+            return;
+          }
+
+          var tl = gsap.timeline({ onComplete: sdLbReset });
+
+          // Phase 1 — UI fades out
+          tl.to(sdLbUiEl, {
+            opacity: 0,
+            duration: SD_LB_UI_OUT_DUR,
+            ease: 'power1.in'
+          }, 0);
+
+          // Phase 2 — Photo slides out to the right (out the window)
+          tl.to(sdLbImageWrapEl, {
+            x: SD_LB_PHOTO_X_OFFSET,
+            opacity: 0,
+            duration: SD_LB_PHOTO_OUT_DUR,
+            ease: 'power2.in'
+          }, '>');
+
+          // Phase 3 — Strips peel open bottom→top (light returns)
+          // transformOrigin flips here so the scaleY:0 collapses upward
+          // toward the bottom edge — reading as "lifting" rather than "closing".
+          // Cleanup of dark opacity, transformOrigin cache, and ARIA state
+          // happens in sdLbReset (timeline onComplete) — single source of truth.
+          tl.to(sdLbStrips, {
+            scaleY: 0,
+            transformOrigin: 'bottom center',
+            duration: SD_LB_STRIP_DURATION * 1.1,
+            ease: 'power2.inOut',
+            stagger: { each: SD_LB_STRIP_STAGGER, from: 'end' }
+          }, '>');
+        }
+
+        function sdLbReset() {
+          sdLbDarkEl.classList.remove('fl718-sd-lb-dark--active');
+          sdLbStageEl.classList.remove('fl718-sd-lb-stage--active');
+          sdLbUiEl.classList.remove('fl718-sd-lb-ui--active');
+          sdLbRootEl.setAttribute('aria-hidden', 'true');
+          // Reset all Glass Pane properties to their initial states.
+          gsap.set(sdLbDarkEl, { opacity: 0 });
+          // CRITICAL: clearProps on transformOrigin first, then re-set.
+          // The close phase tweens transformOrigin to 'bottom center' so the
+          // strips peel upward. Without flushing GSAP's internal transform
+          // cache, a second open would scale strips from the bottom edge,
+          // breaking the "rain shutters closing downward" reading. Two-step
+          // reset (clearProps then set) forces a clean origin re-establish.
+          gsap.set(sdLbStrips, { clearProps: 'transformOrigin' });
+          gsap.set(sdLbStrips, { scaleY: 0, transformOrigin: 'top center' });
+          gsap.set(sdLbImageWrapEl, { opacity: 0, x: 0 });
+          gsap.set(sdLbUiEl, { opacity: 0 });
+          sdLbImageEl.removeAttribute('src');
+          sdLbImageEl.alt = '';
+          // iOS Safari scroll lock — restore position + scroll
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.width = '';
+          window.scrollTo(0, sdLbScrollY);
+          sdLbIsAnimating = false;
+          /* Reset any veil left at opacity:1 — user may have hovered a figure
+             then opened the lightbox without moving the cursor off it first.
+             The mouseleave never fires in that case, so we reset all veils here. */
+          if (sdHoverCapable && !sdReducedMotion) {
+            Array.prototype.slice.call(document.querySelectorAll('.fl718-sd-item__veil')).forEach(function(v) {
+              gsap.killTweensOf(v);
+              gsap.set(v, { opacity: 0 });
+            });
+          }
+          if (sdLbLastFocus) sdLbLastFocus.focus();
+        }
+
+        // NAVIGATE — Glass Pane horizontal slide (current exits one direction,
+        // new arrives from the opposite). Wrap-around enabled (modulo).
+        // direction is computed from the index delta: +1 = next (current
+        // exits left, new enters from right), -1 = prev (mirror).
+        function sdLbNavigate(newIdx) {
+          if (!sdLbIsOpen || sdLbIsAnimating) return;
+          sdLbIsAnimating = true;
+          newIdx = ((newIdx % sdLbTotal) + sdLbTotal) % sdLbTotal;
+
+          // Compute travel direction. Handle wrap edges naturally:
+          // last → first reads as "next", first → last reads as "prev".
+          var direction;
+          if (newIdx === 0 && sdLbCurrentIdx === sdLbTotal - 1) {
+            direction = +1;
+          } else if (newIdx === sdLbTotal - 1 && sdLbCurrentIdx === 0) {
+            direction = -1;
+          } else {
+            direction = (newIdx > sdLbCurrentIdx) ? +1 : -1;
+          }
+
+          var exitX  = direction > 0 ? -SD_LB_PHOTO_X_OFFSET :  SD_LB_PHOTO_X_OFFSET;
+          var enterX = direction > 0 ?  SD_LB_PHOTO_X_OFFSET : -SD_LB_PHOTO_X_OFFSET;
+
+          sdLbCurrentIdx = newIdx;
+          var data = sdLbGetData(newIdx);
+          sdLbUpdateUi(newIdx);
+
+          if (sdReducedMotion) {
+            sdLbImageEl.src = data.src;
+            sdLbImageEl.alt = data.alt;
+            gsap.set(sdLbImageWrapEl, { opacity: 1, x: 0 });
+            sdLbIsAnimating = false;
+            return;
+          }
+
+          // Brief UI dim during the swap.
+          // killTweensOf first — consistent with the hover-veil and other
+          // free-standing gsap.to patterns in this file.
+          gsap.killTweensOf(sdLbUiEl);
+          gsap.to(sdLbUiEl, { opacity: 0.4, duration: 0.15, ease: 'power1.in' });
+
+          // Exit current photo
+          gsap.to(sdLbImageWrapEl, {
+            x: exitX,
+            opacity: 0,
+            duration: SD_LB_PHOTO_NAV_OUT,
+            ease: 'power2.in',
+            onComplete: function() {
+              // Swap src
+              sdLbImageEl.src = data.src;
+              sdLbImageEl.alt = data.alt;
+
+              // Position new photo off-screen on the entering side
+              gsap.set(sdLbImageWrapEl, { x: enterX, opacity: 0 });
+
+              // Enter new photo
+              gsap.to(sdLbImageWrapEl, {
+                x: 0,
+                opacity: 1,
+                duration: SD_LB_PHOTO_NAV_IN,
+                ease: 'power2.out',
+                onComplete: function() {
+                  // Restore UI
+                  gsap.killTweensOf(sdLbUiEl);
+                  gsap.to(sdLbUiEl, { opacity: 1, duration: 0.2, ease: 'power1.out' });
+                  sdLbIsAnimating = false;
+                }
+              });
+            }
+          });
+        }
+
+        // Make grid figures clickable
+        sdLbPhotos.forEach(function(fig) {
+          fig.setAttribute('tabindex', '0');
+          fig.setAttribute('role', 'button');
+          var imgEl = fig.querySelector('img');
+          fig.setAttribute('aria-label', 'Open: ' + (imgEl ? imgEl.getAttribute('alt') : 'photograph'));
+          fig.addEventListener('click', function() { sdLbOpenLb(fig); });
+          fig.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              sdLbOpenLb(fig);
+            }
+          });
+        });
+
+        // Controls
+        if (sdLbCloseEl)     sdLbCloseEl.addEventListener('click', sdLbCloseLb);
+        if (sdLbPrevEl)      sdLbPrevEl.addEventListener('click', function() { sdLbNavigate(sdLbCurrentIdx - 1); });
+        if (sdLbNextEl)      sdLbNextEl.addEventListener('click', function() { sdLbNavigate(sdLbCurrentIdx + 1); });
+        if (sdLbBackdropEl)  sdLbBackdropEl.addEventListener('click', sdLbCloseLb);
+
+        // Keyboard — Escape, Arrow nav, Tab focus trap
+        document.addEventListener('keydown', function(e) {
+          if (!sdLbIsOpen) return;
+          if (e.key === 'Escape')     { sdLbCloseLb(); return; }
+          if (e.key === 'ArrowLeft')  { sdLbNavigate(sdLbCurrentIdx - 1); return; }
+          if (e.key === 'ArrowRight') { sdLbNavigate(sdLbCurrentIdx + 1); return; }
+          if (e.key === 'Tab') {
+            var focusable = [sdLbCloseEl, sdLbPrevEl, sdLbNextEl].filter(function(el) { return el; });
+            if (!focusable.length) return;
+            var first = focusable[0];
+            var last  = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+              if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+            } else {
+              if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+            }
+          }
+        });
+
+        // Touch swipe
+        sdLbStageEl.addEventListener('touchstart', function(e) {
+          sdLbTouchStart = e.touches[0].clientX;
+        }, { passive: true });
+        sdLbStageEl.addEventListener('touchend', function(e) {
+          if (sdLbTouchStart === null) return;
+          var dx = e.changedTouches[0].clientX - sdLbTouchStart;
+          sdLbTouchStart = null;
+          if (Math.abs(dx) < 50) return;
+          sdLbNavigate(sdLbCurrentIdx + (dx < 0 ? 1 : -1));
+        }, { passive: true });
+
+      } // end lightbox guard
+
+    })();
+  </script>
+
+  <!-- Wipe bar — fixed full-viewport overlay for Static Burst link-out transition.
+       Sits outside all scroll containers; z-index 9999 clears everything. -->
+  <div class="fl718-sd-wipe-bar" id="sdWipeBar" aria-hidden="true"></div>
+
+</body>
+</html>
+
+<!-- ============================================================
+     WORDPRESS IMPLEMENTATION NOTES
+     GeneratePress Pro child theme deployment
+
+     CSS filename:
+       generatepress-child/css/santo-domingo.css
+       Enqueue via wp_enqueue_style('fl718-santo-domingo', ...) in functions.php
+
+     JS filename:
+       generatepress-child/js/santo-domingo.js
+       Enqueue via wp_enqueue_script('fl718-santo-domingo', ..., ['gsap', 'scrolltrigger'], true) in functions.php
+       ScrollTrigger required by after-content IIFE (scroll-triggered entrance).
+
+     Body class (add to functions.php):
+       add_filter('body_class', function($classes) {
+         if (is_page('santo-domingo')) {
+           $classes[] = 'fl718-santo-domingo-page';
+         }
+         return $classes;
+       });
+
+     Google Fonts (enqueue in functions.php):
+       wp_enqueue_style('fl718-fonts-santo-domingo',
+         'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,900&family=Lora:ital,wght@1,300&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap',
+         [], null);
+
+     Page template:
+       Standard GeneratePress page (no zero-chrome template required unless
+       header/footer should be suppressed on this page).
+
+     Photo paths:
+       All src paths currently point to Dropbox staging folder.
+       Before WordPress upload: copy photos to generatepress-child/assets/
+       or upload to WordPress Media Library and update src attributes.
+       Note: two filenames contain a leading space in " geometric" —
+       rename these files before upload to remove the leading space,
+       then update the src attributes accordingly.
+
+     Pre-launch reminders:
+       - Hard refresh after every change (Cmd+Shift+R / Ctrl+Shift+R)
+       - Confirm all CSS is scoped to body.fl718-santo-domingo-page
+       - Verify Google Fonts loading in network tab
+       - Confirm body class applied in WordPress page settings
+       - Design hero animation technique (replaces placeholder fade-in)
+       - Design grid entrance animation (replaces placeholder opacity fade)
+       - Design hover effect (replaces placeholder dark veil)
+       - Decide after-content treatment (editorial line / links / minimal)
+       - Finalize typography selection (replace placeholder DM Sans)
+       - Rename the two space-prefixed photo filenames before server upload
+       - Decide whether photo 23 (interior bookend) stays or is cut
+       - Re-export hero at 2560px via Lightroom Hero preset
+       - Add srcset + WebP per QA checklist
+============================================================ -->
